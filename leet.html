@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Numerical Methods Trainer</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #4ecdc4;
+    --text: #e8eaf6;
+    --text2: #9099c8;
+    --pass: #2ecc71;
+    --fail: #e74c3c;
+    --warn: #f39c12;
+    --code-bg: #0d1117;
+    --radius: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  [data-theme="light"] {
+    --bg: #f0f2f8;
+    --surface: #ffffff;
+    --surface2: #e8ecf5;
+    --border: #d0d8ee;
+    --accent: #5a52e0;
+    --accent2: #3db8b0;
+    --text: #1a1d2e;
+    --text2: #5a6080;
+    --pass: #27ae60;
+    --fail: #c0392b;
+    --warn: #d68910;
+    --code-bg: #f8f9fc;
+    --shadow: 0 4px 24px rgba(0,0,0,0.10);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 62px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .logo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+  }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+  .progress-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.82rem;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .progress-pill .count { color: var(--accent); font-weight: 700; }
+  .btn {
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 7px 16px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text2); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: rgba(231,76,60,0.12); color: var(--fail); border: 1.5px solid rgba(231,76,60,0.25); }
+  .btn-danger:hover { background: rgba(231,76,60,0.22); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 12px rgba(108,99,255,0.3);
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .theme-toggle {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+  .main-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: calc(100vh - 62px);
+  }
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 1rem 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 5px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .sidebar-search { padding: 0 12px 12px; }
+  .sidebar-search input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    color: var(--text);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .sidebar-search input:focus { border-color: var(--accent); }
+  .sidebar-search input::placeholder { color: var(--text2); }
+  .category-header {
+    padding: 8px 16px 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+  .task-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.87rem;
+    color: var(--text2);
+    line-height: 1.3;
+  }
+  .task-item:hover { background: var(--surface2); color: var(--text); }
+  .task-item.active { border-left-color: var(--accent); background: rgba(108,99,255,0.08); color: var(--text); }
+  .task-item.solved .status-dot { background: var(--pass); }
+  .task-item .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .content { display: flex; flex-direction: column; overflow: hidden; }
+  .task-header {
+    padding: 18px 28px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .task-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .category-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    background: rgba(108,99,255,0.12);
+    color: var(--accent);
+    border: 1px solid rgba(108,99,255,0.2);
+  }
+  .task-description { font-size: 0.88rem; color: var(--text2); line-height: 1.6; margin-top: 6px; max-width: 820px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 0; flex: 1; overflow: hidden; }
+  .panel-left { border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .panel-label {
+    padding: 9px 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text2);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .editor-wrap { flex: 1; overflow: hidden; background: var(--code-bg); }
+  textarea#code-editor {
+    width: 100%;
+    height: 100%;
+    background: var(--code-bg);
+    color: var(--text);
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 16px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+    font-size: 0.87rem;
+    line-height: 1.65;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    caret-color: var(--accent);
+  }
+  textarea#code-editor::selection { background: rgba(108,99,255,0.3); }
+  .run-bar {
+    padding: 10px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .pyodide-status { font-size: 0.78rem; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+  .pyodide-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); animation: pulse 1.5s infinite; }
+  .pyodide-status.ready .dot { background: var(--pass); animation: none; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .panel-right { display: flex; flex-direction: column; overflow: hidden; background: var(--surface); }
+  .results-container { flex: 1; overflow-y: auto; padding: 16px; }
+  .results-container::-webkit-scrollbar { width: 5px; }
+  .results-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .result-placeholder { color: var(--text2); font-size: 0.9rem; text-align: center; margin-top: 60px; }
+  .result-placeholder .icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .verdict-banner {
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .verdict-banner.pass { background: rgba(46,204,113,0.12); border: 1.5px solid rgba(46,204,113,0.25); color: var(--pass); }
+  .verdict-banner.fail { background: rgba(231,76,60,0.12); border: 1.5px solid rgba(231,76,60,0.25); color: var(--fail); }
+  .verdict-banner.error { background: rgba(243,156,18,0.12); border: 1.5px solid rgba(243,156,18,0.25); color: var(--warn); }
+  .test-case { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .test-case-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; }
+  .test-case-header:hover { background: rgba(255,255,255,0.03); }
+  .tc-badge { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+  .tc-badge.pass { background: rgba(46,204,113,0.15); color: var(--pass); }
+  .tc-badge.fail { background: rgba(231,76,60,0.15); color: var(--fail); }
+  .test-case-title { font-size: 0.87rem; font-weight: 600; flex: 1; }
+  .test-case-body { padding: 0 14px 12px; display: none; }
+  .test-case-body.open { display: block; }
+  .tc-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text2);
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+    line-height: 1.6;
+  }
+  .tc-detail.error-text { color: var(--fail); }
+  #loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,17,23,0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.85s linear infinite;
+    margin-bottom: 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--text2); font-size: 0.95rem; }
+  .loading-sub { color: var(--text2); font-size: 0.8rem; margin-top: 6px; opacity: 0.6; }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    font-size: 0.88rem;
+    box-shadow: var(--shadow);
+    z-index: 9998;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.pass { border-color: rgba(46,204,113,0.4); color: var(--pass); }
+  .toast.fail { border-color: rgba(231,76,60,0.4); color: var(--fail); }
+  .hint-toggle { font-size: 0.78rem; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 8px; display: inline-block; }
+  .hint-box {
+    background: rgba(108,99,255,0.07);
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.83rem;
+    color: var(--text2);
+    margin-top: 8px;
+    display: none;
+    line-height: 1.6;
+  }
+  .hint-box.open { display: block; }
+  kbd { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 0.78rem; font-family: monospace; color: var(--text2); }
+  @media (max-width: 900px) {
+    .main-layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .panels { grid-template-columns: 1fr; }
+    .panel-left { border-right: none; border-bottom: 1px solid var(--border); height: 45vh; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Loading Pyodide Python Runtime...</div>
+  <div class="loading-sub">This may take a moment on first load</div>
+</div>
+
+<header>
+  <span class="logo">⚡ Numerical Methods Trainer</span>
+  <div class="header-right">
+    <div class="progress-pill">
+      Progress: <span class="count" id="progress-count">0</span>&nbsp;/&nbsp;<span id="total-count">0</span>
+    </div>
+    <button class="btn btn-danger" onclick="App.resetProgress()">↺ Reset</button>
+    <button class="theme-toggle" id="theme-btn" onclick="App.toggleTheme()" title="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="main-layout">
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <input type="text" placeholder="🔍 Search tasks..." id="search-input" oninput="App.filterTasks(this.value)">
+    </div>
+    <div id="task-list"></div>
+  </aside>
+
+  <main class="content">
+    <div class="task-header">
+      <div class="task-title" id="task-title">Select a Task</div>
+      <div class="task-description" id="task-description">Choose a numerical method from the sidebar to begin.</div>
+      <span class="hint-toggle" id="hint-toggle" onclick="App.toggleHint()" style="display:none">💡 Show Hint</span>
+      <div class="hint-box" id="hint-box"></div>
+    </div>
+
+    <div class="panels">
+      <div class="panel-left">
+        <div class="panel-label">
+          <span>🐍 Python Editor</span>
+          <span style="margin-left:auto;font-size:0.7rem;opacity:0.6"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> to run</span>
+        </div>
+        <div class="editor-wrap">
+          <textarea id="code-editor" spellcheck="false" placeholder="Select a task to start coding..."></textarea>
+        </div>
+        <div class="run-bar">
+          <button class="btn btn-primary" id="run-btn" onclick="App.runCode()" disabled>▶ Run Tests</button>
+          <button class="btn btn-outline" onclick="App.resetCode()">⟲ Reset</button>
+          <div class="pyodide-status" id="pyodide-status">
+            <div class="dot"></div><span>Loading Python...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-right">
+        <div class="panel-label">📊 Test Results</div>
+        <div class="results-container" id="results-container">
+          <div class="result-placeholder">
+            <div class="icon">🧮</div>
+            <div>Run your code to see test results</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================================
+// TASK DEFINITIONS — 35 numerical methods across 8 categories
+// ============================================================================
+const TASKS = [
+  // ── ROOT FINDING ──────────────────────────────────────────────────────────
+  {
+    id:"bisection", category:"Root Finding", title:"Bisection Method",
+    description:"Implement the bisection method to find the root of f(x) on interval [a, b] where f(a)*f(b) < 0. Halve the interval repeatedly until |b-a| < tol.",
+    hint:"Compute mid = (a+b)/2, evaluate f(mid). If f(a)*f(mid) < 0, root is in [a,mid], else in [mid,b]. Repeat until converged.",
+    template:`def bisection(f, a, b, tol=1e-6, max_iter=1000):
+    """
+    Find root of f in [a,b] using bisection method.
+    Returns: float - approximate root
+    """
+    pass`,
+    tests:[
+      {name:"Root of x²-2 in [1,2]",setup:"import math\nf=lambda x:x**2-2\nresult=bisection(f,1.0,2.0,tol=1e-8)",check:"abs(result-math.sqrt(2))<1e-6",expected:"√2 ≈ 1.41421356"},
+      {name:"Root of x³-x-2 in [1,2]",setup:"f=lambda x:x**3-x-2\nresult=bisection(f,1.0,2.0,tol=1e-8)",check:"abs(result-1.5213797)<1e-5",expected:"≈ 1.5213797"},
+      {name:"Root of cos(x)-x in [0,1]",setup:"import math\nf=lambda x:math.cos(x)-x\nresult=bisection(f,0.0,1.0,tol=1e-8)",check:"abs(result-0.7390851)<1e-5",expected:"≈ 0.7390851"}
+    ]
+  },
+  {
+    id:"fixed_point", category:"Root Finding", title:"Fixed-Point Iteration",
+    description:"Implement fixed-point iteration: x_{n+1} = g(x_n) until |x_{n+1} - x_n| < tol. Requires g to be a contraction mapping near the fixed point.",
+    hint:"Start from x0. Iterate x = g(x) until consecutive values are close enough. Check |new - old| < tol.",
+    template:`def fixed_point(g, x0, tol=1e-6, max_iter=1000):
+    """
+    Find fixed point of g(x)=x using iteration.
+    Returns: float - approximate fixed point
+    """
+    pass`,
+    tests:[
+      {name:"Fixed point of cos(x)",setup:"import math\ng=lambda x:math.cos(x)\nresult=fixed_point(g,0.5,tol=1e-8)",check:"abs(result-0.7390851)<1e-5",expected:"≈ 0.7390851"},
+      {name:"Fixed point of (x+2/x)/2 → √2",setup:"g=lambda x:(x+2.0/x)/2.0\nresult=fixed_point(g,1.5,tol=1e-8)",check:"abs(result-1.41421356)<1e-5",expected:"√2 ≈ 1.41421356"}
+    ]
+  },
+  {
+    id:"newton_raphson", category:"Root Finding", title:"Newton-Raphson Method",
+    description:"Implement Newton-Raphson: x_{n+1} = x_n - f(x_n)/f'(x_n). Requires the derivative f'. Quadratic convergence near simple roots.",
+    hint:"Check if |f'(x)| is too small (near-zero) and raise or handle gracefully. Iterate until |f(x)| < tol.",
+    template:`def newton_raphson(f, df, x0, tol=1e-6, max_iter=1000):
+    """
+    Find root of f using Newton-Raphson.
+    Returns: float - approximate root
+    """
+    pass`,
+    tests:[
+      {name:"Root of x²-2",setup:"f=lambda x:x**2-2\ndf=lambda x:2*x\nresult=newton_raphson(f,df,1.5,tol=1e-10)",check:"abs(result**2-2)<1e-8",expected:"√2 ≈ 1.41421356"},
+      {name:"Root of x³-x-2",setup:"f=lambda x:x**3-x-2\ndf=lambda x:3*x**2-1\nresult=newton_raphson(f,df,1.5,tol=1e-10)",check:"abs(result-1.5213797)<1e-5",expected:"≈ 1.5213797"},
+      {name:"Root of exp(x)-3",setup:"import math\nf=lambda x:math.exp(x)-3\ndf=lambda x:math.exp(x)\nresult=newton_raphson(f,df,1.0,tol=1e-10)",check:"abs(result-math.log(3))<1e-7",expected:"ln(3) ≈ 1.09861"}
+    ]
+  },
+  {
+    id:"secant", category:"Root Finding", title:"Secant Method",
+    description:"Implement the secant method: x_{n+1} = x_n - f(x_n)*(x_n-x_{n-1})/(f(x_n)-f(x_{n-1})). No derivative needed.",
+    hint:"Use two initial points. The secant line approximates the derivative. Handle f(x_n)==f(x_{n-1}) to avoid division by zero.",
+    template:`def secant(f, x0, x1, tol=1e-6, max_iter=1000):
+    """
+    Find root of f using secant method.
+    Returns: float - approximate root
+    """
+    pass`,
+    tests:[
+      {name:"Root of x²-2",setup:"f=lambda x:x**2-2\nresult=secant(f,1.0,2.0,tol=1e-8)",check:"abs(result**2-2)<1e-6",expected:"√2 ≈ 1.41421356"},
+      {name:"Root of x³-x-2",setup:"f=lambda x:x**3-x-2\nresult=secant(f,1.0,2.0,tol=1e-8)",check:"abs(result-1.5213797)<1e-5",expected:"≈ 1.5213797"}
+    ]
+  },
+  {
+    id:"false_position", category:"Root Finding", title:"False Position (Regula Falsi)",
+    description:"Implement Regula Falsi: like bisection but use linear interpolation c = a - f(a)*(b-a)/(f(b)-f(a)) instead of the midpoint.",
+    hint:"Compute c = a - f(a)*(b-a)/(f(b)-f(a)). Replace a or b with c based on the sign of f(c), keeping a sign change.",
+    template:`def false_position(f, a, b, tol=1e-6, max_iter=1000):
+    """
+    Find root of f in [a,b] using Regula Falsi.
+    Returns: float - approximate root
+    """
+    pass`,
+    tests:[
+      {name:"Root of x²-2 in [1,2]",setup:"import math\nf=lambda x:x**2-2\nresult=false_position(f,1.0,2.0,tol=1e-8)",check:"abs(result-math.sqrt(2))<1e-5",expected:"√2 ≈ 1.41421356"},
+      {name:"Root of x³-x-2 in [1,2]",setup:"f=lambda x:x**3-x-2\nresult=false_position(f,1.0,2.0,tol=1e-8)",check:"abs(result-1.5213797)<1e-5",expected:"≈ 1.5213797"}
+    ]
+  },
+  {
+    id:"muller", category:"Root Finding", title:"Muller's Method",
+    description:"Implement Muller's method: fit a quadratic through three points and find the root nearest to x2 using the quadratic formula.",
+    hint:"h0=x1-x0, h1=x2-x1, δ0=(f1-f0)/h0, δ1=(f2-f1)/h1, a=(δ1-δ0)/(h1+h0), b=a*h1+δ1, c=f2. Root: x2 - 2c/(b±√(b²-4ac)).",
+    template:`def muller(f, x0, x1, x2, tol=1e-6, max_iter=100):
+    """
+    Find root of f using Muller's method.
+    Returns: float (real part of approximate root)
+    """
+    pass`,
+    tests:[
+      {name:"Root of x²-2",setup:"f=lambda x:x**2-2\nresult=muller(f,0.0,1.0,2.0,tol=1e-8)\nresult=result.real if hasattr(result,'real') else result",check:"abs(result-1.41421356)<1e-5",expected:"√2 ≈ 1.41421356"},
+      {name:"Root of x³-x-2",setup:"f=lambda x:x**3-x-2\nresult=muller(f,0.5,1.0,2.0,tol=1e-8)\nresult=result.real if hasattr(result,'real') else result",check:"abs(result-1.5213797)<1e-5",expected:"≈ 1.5213797"}
+    ]
+  },
+
+  // ── DIRECT LINEAR SYSTEMS ─────────────────────────────────────────────────
+  {
+    id:"cramers_rule", category:"Linear Systems – Direct", title:"Cramer's Rule",
+    description:"Solve Ax=b using Cramer's Rule: x_i = det(A_i)/det(A) where A_i is A with column i replaced by b.",
+    hint:"First implement a recursive determinant function. Then for each i, build A_i by replacing column i with b and compute the ratio.",
+    template:`def cramers_rule(A, b):
+    """
+    Solve Ax=b using Cramer's Rule.
+    Returns: list - solution vector x
+    """
+    pass`,
+    tests:[
+      {name:"2×2 system",setup:"A=[[2,1],[1,3]]\nb=[5,10]\nresult=cramers_rule(A,b)",check:"abs(result[0]-1.0)<1e-8 and abs(result[1]-3.0)<1e-8",expected:"x=[1,3]"},
+      {name:"3×3 system",setup:"A=[[2,1,-1],[3,2,1],[1,-1,2]]\nb=[8,11,3]\nresult=cramers_rule(A,b)",check:"abs(result[0]-2.0)<1e-6 and abs(result[1]-3.0)<1e-6 and abs(result[2]-1.0)<1e-6",expected:"x=[2,3,1]"}
+    ]
+  },
+  {
+    id:"gaussian_elimination", category:"Linear Systems – Direct", title:"Gaussian Elimination",
+    description:"Solve Ax=b using Gaussian elimination with back-substitution. Use partial pivoting (swap rows) for numerical stability.",
+    hint:"Augment [A|b]. For each pivot row, find max element below (partial pivot), swap rows, eliminate below. Back-substitute from last row.",
+    template:`def gaussian_elimination(A, b):
+    """
+    Solve Ax=b using Gaussian elimination with partial pivoting.
+    Returns: list - solution vector x
+    """
+    pass`,
+    tests:[
+      {name:"3×3 system",setup:"A=[[2,1,-1],[3,2,1],[1,-1,2]]\nb=[8,11,3]\nresult=gaussian_elimination(A,b)",check:"abs(result[0]-2.0)<1e-8 and abs(result[1]-3.0)<1e-8 and abs(result[2]-1.0)<1e-8",expected:"x=[2,3,1]"},
+      {name:"4×4 verification",setup:"A=[[4,3,0,0],[3,4,-1,0],[0,-1,4,3],[0,0,3,4]]\nb=[24,30,-11,4]\nresult=gaussian_elimination(A,b)\nresidual=[sum(A[i][j]*result[j] for j in range(4))-b[i] for i in range(4)]",check:"all(abs(r)<1e-6 for r in residual)",expected:"Ax≈b"}
+    ]
+  },
+  {
+    id:"gauss_jordan", category:"Linear Systems – Direct", title:"Gauss-Jordan Elimination",
+    description:"Solve Ax=b by reducing the augmented matrix [A|b] to reduced row echelon form [I|x] — eliminating both below and above each pivot.",
+    hint:"After forward elimination, also eliminate upward. Scale pivot rows so the diagonal becomes 1. The last column gives the solution.",
+    template:`def gauss_jordan(A, b):
+    """
+    Solve Ax=b using Gauss-Jordan elimination.
+    Returns: list - solution vector x
+    """
+    pass`,
+    tests:[
+      {name:"3×3 system",setup:"A=[[2,1,-1],[3,2,1],[1,-1,2]]\nb=[8,11,3]\nresult=gauss_jordan(A,b)",check:"abs(result[0]-2.0)<1e-8 and abs(result[1]-3.0)<1e-8 and abs(result[2]-1.0)<1e-8",expected:"x=[2,3,1]"},
+      {name:"2×2 system",setup:"A=[[3,2],[1,4]]\nb=[7,9]\nresult=gauss_jordan(A,b)",check:"abs(result[0]-1.0)<1e-8 and abs(result[1]-2.0)<1e-8",expected:"x=[1,2]"}
+    ]
+  },
+
+  // ── ITERATIVE LINEAR SYSTEMS ──────────────────────────────────────────────
+  {
+    id:"jacobi", category:"Linear Systems – Iterative", title:"Jacobi Method",
+    description:"Solve Ax=b iteratively: x_i^(k+1) = (b_i - Σ_{j≠i} A_ij*x_j^(k)) / A_ii. All updates use previous iteration values.",
+    hint:"Store x_new separately from x_old. Update all components simultaneously. Stop when max|x_new - x_old| < tol.",
+    template:`def jacobi(A, b, x0=None, tol=1e-6, max_iter=1000):
+    """
+    Solve Ax=b using Jacobi iterative method.
+    Returns: list - solution vector x
+    """
+    pass`,
+    tests:[
+      {name:"Diagonally dominant 3×3",setup:"A=[[10,1,1],[2,10,1],[1,1,10]]\nb=[12,13,12]\nresult=jacobi(A,b,tol=1e-8)\nresidual=[sum(A[i][j]*result[j] for j in range(3))-b[i] for i in range(3)]",check:"all(abs(r)<1e-5 for r in residual)",expected:"x≈[1,1,1]"}
+    ]
+  },
+  {
+    id:"gauss_seidel", category:"Linear Systems – Iterative", title:"Gauss-Seidel Method",
+    description:"Solve Ax=b like Jacobi but immediately use newly computed x_i values in the same iteration sweep. Converges faster than Jacobi.",
+    hint:"Update x[i] in-place using already-updated x[0..i-1] and old x[i+1..n-1]. Check norm of change for convergence.",
+    template:`def gauss_seidel(A, b, x0=None, tol=1e-6, max_iter=1000):
+    """
+    Solve Ax=b using Gauss-Seidel iterative method.
+    Returns: list - solution vector x
+    """
+    pass`,
+    tests:[
+      {name:"Diagonally dominant 3×3",setup:"A=[[10,1,1],[2,10,1],[1,1,10]]\nb=[12,13,12]\nresult=gauss_seidel(A,b,tol=1e-8)\nresidual=[sum(A[i][j]*result[j] for j in range(3))-b[i] for i in range(3)]",check:"all(abs(r)<1e-5 for r in residual)",expected:"x≈[1,1,1]"}
+    ]
+  },
+  {
+    id:"sor", category:"Linear Systems – Iterative", title:"Relaxation (SOR) Method",
+    description:"Successive Over-Relaxation: blend the Gauss-Seidel update with the old value using relaxation factor ω. x_i^new = (1-ω)*x_i^old + ω*x_i_GS.",
+    hint:"Compute Gauss-Seidel update GS_i, then x[i] = (1-omega)*x_old[i] + omega*GS_i. For ω=1 it's plain Gauss-Seidel.",
+    template:`def sor(A, b, omega=1.25, x0=None, tol=1e-6, max_iter=1000):
+    """
+    Solve Ax=b using SOR iterative method.
+    Returns: list - solution vector x
+    """
+    pass`,
+    tests:[
+      {name:"3×3 diagonally dominant",setup:"A=[[4,1,0],[1,4,1],[0,1,4]]\nb=[6,12,6]\nresult=sor(A,b,omega=1.25,tol=1e-8)\nresidual=[sum(A[i][j]*result[j] for j in range(3))-b[i] for i in range(3)]",check:"all(abs(r)<1e-5 for r in residual)",expected:"Ax≈b"}
+    ]
+  },
+
+  // ── MATRIX METHODS ────────────────────────────────────────────────────────
+  {
+    id:"lu_inverse", category:"Matrix Methods", title:"Matrix Inverse via LU Factorization",
+    description:"Compute A⁻¹ using LU decomposition (Doolittle). Decompose A=LU, then for each standard basis vector e_i solve Ly=e_i then Ux=y to get each column of A⁻¹.",
+    hint:"LU decomp: U[i][j] and L[i][j] = (A[i][j] - Σ L[i][k]*U[k][j]) / U[j][j]. Forward/back substitution for each right-hand side.",
+    template:`def matrix_inverse_lu(A):
+    """
+    Compute inverse of A using LU factorization.
+    Returns: list of lists - inverse matrix
+    """
+    pass`,
+    tests:[
+      {name:"2×2 inverse check",setup:"A=[[2,1],[1,3]]\ninv=matrix_inverse_lu(A)\nn=2\nresult=[[sum(A[i][k]*inv[k][j] for k in range(n)) for j in range(n)] for i in range(n)]",check:"all(abs(result[i][j]-(1.0 if i==j else 0.0))<1e-8 for i in range(2) for j in range(2))",expected:"A×A⁻¹=I"},
+      {name:"3×3 inverse check",setup:"A=[[1,2,3],[0,1,4],[5,6,0]]\ninv=matrix_inverse_lu(A)\nn=3\nresult=[[sum(A[i][k]*inv[k][j] for k in range(n)) for j in range(n)] for i in range(n)]",check:"all(abs(result[i][j]-(1.0 if i==j else 0.0))<1e-6 for i in range(3) for j in range(3))",expected:"A×A⁻¹=I"}
+    ]
+  },
+  {
+    id:"iterative_inverse", category:"Matrix Methods", title:"Iterative Matrix Inversion (Schulz)",
+    description:"Compute A⁻¹ iteratively using the Hotelling-Schulz iteration: X_{k+1} = 2X_k - X_k*A*X_k. Initialize with X_0 = α*Aᵀ where α = 1/(||A||₁*||A||∞).",
+    hint:"Compute mat_mul(A,B): standard O(n³) loop. Initialize alpha = 1/(norm1(A)*norminf(A)). X = alpha*A^T. Iterate: X = 2X - X*A*X until ||I - X*A|| < tol.",
+    template:`def iterative_inverse(A, tol=1e-6, max_iter=100):
+    """
+    Compute matrix inverse using Hotelling-Schulz iteration.
+    Returns: list of lists - approximate inverse
+    """
+    pass`,
+    tests:[
+      {name:"2×2 matrix",setup:"A=[[2.0,1.0],[1.0,3.0]]\ninv=iterative_inverse(A)\nn=2\nresult=[[sum(A[i][k]*inv[k][j] for k in range(n)) for j in range(n)] for i in range(n)]",check:"all(abs(result[i][j]-(1.0 if i==j else 0.0))<1e-4 for i in range(2) for j in range(2))",expected:"A×A⁻¹≈I"}
+    ]
+  },
+
+  // ── EIGENVALUE METHODS ────────────────────────────────────────────────────
+  {
+    id:"power_method", category:"Eigenvalue Methods", title:"Power Method",
+    description:"Find the dominant eigenvalue (largest |λ|) and eigenvector of A by repeatedly multiplying A by a normalized vector.",
+    hint:"Start v = [1,1,...]. Repeat: w = A*v, λ = max(|w|), v = w/λ. Converge when |λ_new - λ_old| < tol. Return (λ, v).",
+    template:`def power_method(A, v0=None, tol=1e-6, max_iter=1000):
+    """
+    Find dominant eigenvalue and eigenvector of A.
+    Returns: tuple (eigenvalue: float, eigenvector: list)
+    """
+    pass`,
+    tests:[
+      {name:"Dominant eigenvalue of [[4,1],[2,3]]",setup:"A=[[4,1],[2,3]]\neig,vec=power_method(A,tol=1e-8)",check:"abs(eig-5.0)<1e-5",expected:"λ₁=5"},
+      {name:"Dominant eigenvalue of [[6,2],[2,3]]",setup:"A=[[6,2],[2,3]]\neig,vec=power_method(A,tol=1e-8)",check:"abs(eig-7.0)<1e-5",expected:"λ₁=7"}
+    ]
+  },
+  {
+    id:"jacobi_eigenvalue", category:"Eigenvalue Methods", title:"Jacobi Eigenvalue Method",
+    description:"Find all eigenvalues of a symmetric matrix by applying Givens rotations to zero out the off-diagonal element with largest absolute value. Repeat until convergence.",
+    hint:"Find p,q where |A[p][q]| is max off-diagonal. Compute angle θ = 0.5*atan2(2*A[p][q], A[q][q]-A[p][p]). Apply rotation. Diagonal → eigenvalues.",
+    template:`def jacobi_eigen(A, tol=1e-8, max_iter=100):
+    """
+    Find all eigenvalues of symmetric matrix A.
+    Returns: list - eigenvalues sorted ascending
+    """
+    pass`,
+    tests:[
+      {name:"2×2 symmetric [[4,2],[2,1]]",setup:"A=[[4,2],[2,1]]\neigs=sorted(jacobi_eigen(A))",check:"abs(eigs[0]-0.0)<0.15 and abs(eigs[1]-5.0)<0.15",expected:"λ≈[0,5]"},
+      {name:"3×3 diagonal",setup:"A=[[3,0,0],[0,1,0],[0,0,2]]\neigs=sorted(jacobi_eigen(A))",check:"abs(eigs[0]-1.0)<1e-5 and abs(eigs[1]-2.0)<1e-5 and abs(eigs[2]-3.0)<1e-5",expected:"λ=[1,2,3]"}
+    ]
+  },
+
+  // ── INTERPOLATION ─────────────────────────────────────────────────────────
+  {
+    id:"lagrange", category:"Interpolation", title:"Lagrange Interpolation",
+    description:"Evaluate the Lagrange interpolating polynomial at x: P(x) = Σ y_i * L_i(x) where L_i(x) = Π_{j≠i} (x-x_j)/(x_i-x_j).",
+    hint:"For each i, compute the basis polynomial L_i(x) by taking the product over all j≠i of (x-x_j)/(x_i-x_j). Sum y_i*L_i(x).",
+    template:`def lagrange(xs, ys, x):
+    """
+    Evaluate Lagrange interpolating polynomial at x.
+    Returns: float - interpolated value
+    """
+    pass`,
+    tests:[
+      {name:"Interpolate sin through 5 points",setup:"import math\nxs=[0,math.pi/6,math.pi/4,math.pi/3,math.pi/2]\nys=[math.sin(xi) for xi in xs]\nresult=lagrange(xs,ys,math.pi/5)",check:"abs(result-math.sin(math.pi/5))<1e-4",expected:"≈sin(π/5)"},
+      {name:"Polynomial x² through [1,2,3]",setup:"xs=[1,2,3]\nys=[1,4,9]\nresult=lagrange(xs,ys,2.5)",check:"abs(result-6.25)<1e-8",expected:"f(2.5)=6.25"}
+    ]
+  },
+  {
+    id:"newton_forward", category:"Interpolation", title:"Newton Forward Interpolation",
+    description:"Evaluate Newton's forward interpolation using the forward difference table. xs must be equally spaced. s=(x-x0)/h; use binomial coefficients with forward differences.",
+    hint:"Build forward difference table Δ^k y_0. Then P(x) = Σ_{k=0}^{n} C(s,k) * Δ^k y_0 where C(s,k)=s(s-1)...(s-k+1)/k!",
+    template:`def newton_forward(xs, ys, x):
+    """
+    Newton forward interpolation (equally-spaced xs).
+    Returns: float - interpolated value
+    """
+    pass`,
+    tests:[
+      {name:"x² at equally-spaced points",setup:"xs=[1.0,2.0,3.0,4.0,5.0]\nys=[xi**2 for xi in xs]\nresult=newton_forward(xs,ys,2.5)",check:"abs(result-6.25)<1e-8",expected:"f(2.5)=6.25"},
+      {name:"exp(x) at equally-spaced points",setup:"import math\nxs=[0.0,0.5,1.0,1.5,2.0]\nys=[math.exp(xi) for xi in xs]\nresult=newton_forward(xs,ys,0.75)",check:"abs(result-math.exp(0.75))<1e-3",expected:"≈e^0.75"}
+    ]
+  },
+  {
+    id:"newton_backward", category:"Interpolation", title:"Newton Backward Interpolation",
+    description:"Evaluate Newton's backward interpolation using the backward difference table — useful for interpolating near the end of a table.",
+    hint:"Build backward difference table ∇^k y_n. s=(x-x_n)/h (negative for values before x_n). P(x) = Σ C(-s,k)*(-1)^k * ∇^k y_n.",
+    template:`def newton_backward(xs, ys, x):
+    """
+    Newton backward interpolation (equally-spaced xs).
+    Returns: float - interpolated value
+    """
+    pass`,
+    tests:[
+      {name:"x² near end of table",setup:"xs=[1.0,2.0,3.0,4.0,5.0]\nys=[xi**2 for xi in xs]\nresult=newton_backward(xs,ys,4.5)",check:"abs(result-20.25)<1e-8",expected:"f(4.5)=20.25"},
+      {name:"x³ near end of table",setup:"xs=[1.0,2.0,3.0,4.0]\nys=[xi**3 for xi in xs]\nresult=newton_backward(xs,ys,3.5)",check:"abs(result-42.875)<1e-6",expected:"f(3.5)=42.875"}
+    ]
+  },
+  {
+    id:"divided_differences", category:"Interpolation", title:"Newton Divided Differences",
+    description:"Evaluate Newton's divided differences interpolation for non-equally-spaced data. Build the divided difference table recursively.",
+    hint:"f[x_i,...,x_k] = (f[x_{i+1}..x_k] - f[x_i..x_{k-1}])/(x_k-x_i). P(x) = f[x0] + f[x0,x1](x-x0) + f[x0,x1,x2](x-x0)(x-x1) + ...",
+    template:`def divided_differences(xs, ys, x):
+    """
+    Newton divided differences interpolation.
+    Returns: float - interpolated value
+    """
+    pass`,
+    tests:[
+      {name:"x² at non-uniform points",setup:"xs=[1.0,1.5,2.5,4.0]\nys=[xi**2 for xi in xs]\nresult=divided_differences(xs,ys,2.0)",check:"abs(result-4.0)<1e-8",expected:"f(2.0)=4.0"},
+      {name:"x³ at [0,1,2,3]",setup:"xs=[0.0,1.0,2.0,3.0]\nys=[xi**3 for xi in xs]\nresult=divided_differences(xs,ys,1.5)",check:"abs(result-3.375)<1e-8",expected:"f(1.5)=3.375"}
+    ]
+  },
+  {
+    id:"cubic_spline", category:"Interpolation", title:"Cubic Spline Interpolation",
+    description:"Implement natural cubic spline interpolation. Set up and solve a tridiagonal system for the second derivatives (moments) with natural BC: M_0 = M_n = 0.",
+    hint:"For n intervals, set up (n-1)×(n-1) tridiagonal system. h_i = x_{i+1}-x_i. Solve for M_i (second derivatives) then evaluate the piecewise cubic.",
+    template:`def cubic_spline(xs, ys, x):
+    """
+    Natural cubic spline interpolation.
+    Returns: float - interpolated value
+    """
+    pass`,
+    tests:[
+      {name:"Spline passes through data points",setup:"xs=[0.0,1.0,2.0,3.0,4.0]\nys=[0.0,1.0,4.0,9.0,16.0]\nresult=cubic_spline(xs,ys,2.0)",check:"abs(result-4.0)<1e-8",expected:"f(2)=4.0"},
+      {name:"Smooth interpolation between knots",setup:"xs=[0.0,1.0,2.0,3.0]\nys=[0.0,1.0,8.0,27.0]\nr1=cubic_spline(xs,ys,1.0)\nr2=cubic_spline(xs,ys,3.0)",check:"abs(r1-1.0)<1e-8 and abs(r2-27.0)<1e-8",expected:"Exact at knots"}
+    ]
+  },
+
+  // ── NUMERICAL INTEGRATION ─────────────────────────────────────────────────
+  {
+    id:"newton_cotes", category:"Numerical Integration", title:"Newton-Cotes (General)",
+    description:"Implement a composite Newton-Cotes integration with n subintervals. Uses the trapezoidal rule (n=1 per sub) generalized. Evaluates f at n+1 equally-spaced points and computes the integral.",
+    hint:"h=(b-a)/n. Evaluate f at x_0,...,x_n. Weights for n=1: [1,1], n=2: [1,4,1]/3, n=3: [3,9,9,3]*3/8, n=4: [7,32,12,32,7]*2/45. Apply composite rule.",
+    template:`def newton_cotes(f, a, b, n):
+    """
+    Integrate f from a to b using n subintervals (composite).
+    Returns: float - approximate integral
+    """
+    pass`,
+    tests:[
+      {name:"∫x² dx from 0 to 1 (n=4)",setup:"f=lambda x:x**2\nresult=newton_cotes(f,0.0,1.0,4)",check:"abs(result-1/3)<1e-4",expected:"1/3≈0.33333"},
+      {name:"∫sin(x) dx from 0 to π (n=6)",setup:"import math\nf=lambda x:math.sin(x)\nresult=newton_cotes(f,0.0,math.pi,6)",check:"abs(result-2.0)<1e-3",expected:"=2.0"}
+    ]
+  },
+  {
+    id:"trapezoidal", category:"Numerical Integration", title:"Trapezoidal Rule",
+    description:"Implement composite trapezoidal rule: I ≈ h/2 * [f(x_0) + 2f(x_1) + ... + 2f(x_{n-1}) + f(x_n)] where h=(b-a)/n.",
+    hint:"h=(b-a)/n. Sum = f(a) + f(b) + 2*Σf(x_i) for i=1 to n-1. Result = h/2 * Sum.",
+    template:`def trapezoidal(f, a, b, n):
+    """
+    Composite trapezoidal rule.
+    Returns: float - approximate integral
+    """
+    pass`,
+    tests:[
+      {name:"∫x² dx from 0 to 1 (n=1000)",setup:"f=lambda x:x**2\nresult=trapezoidal(f,0.0,1.0,1000)",check:"abs(result-1/3)<1e-5",expected:"1/3"},
+      {name:"∫sin(x) dx from 0 to π (n=1000)",setup:"import math\nf=lambda x:math.sin(x)\nresult=trapezoidal(f,0.0,math.pi,1000)",check:"abs(result-2.0)<1e-5",expected:"=2.0"}
+    ]
+  },
+  {
+    id:"simpsons_13", category:"Numerical Integration", title:"Simpson's 1/3 Rule",
+    description:"Composite Simpson's 1/3 rule (n must be even): I ≈ h/3 * [f(x_0) + 4f(x_1) + 2f(x_2) + 4f(x_3) + ... + 4f(x_{n-1}) + f(x_n)].",
+    hint:"h=(b-a)/n. Sum = f(a)+f(b). For i=1..n-1: add 4*f(x_i) if i odd, 2*f(x_i) if i even. Result = h/3 * Sum. n must be even.",
+    template:`def simpsons_13(f, a, b, n):
+    """
+    Composite Simpson's 1/3 rule (n must be even).
+    Returns: float - approximate integral
+    """
+    pass`,
+    tests:[
+      {name:"∫x⁴ dx from 0 to 1 (n=100)",setup:"f=lambda x:x**4\nresult=simpsons_13(f,0.0,1.0,100)",check:"abs(result-0.2)<1e-8",expected:"=0.2"},
+      {name:"∫exp(x) dx from 0 to 1 (n=100)",setup:"import math\nf=lambda x:math.exp(x)\nresult=simpsons_13(f,0.0,1.0,100)",check:"abs(result-(math.e-1))<1e-8",expected:"e-1≈1.71828"}
+    ]
+  },
+  {
+    id:"simpsons_38", category:"Numerical Integration", title:"Simpson's 3/8 Rule",
+    description:"Composite Simpson's 3/8 rule (n must be multiple of 3): I ≈ 3h/8 * [f(x_0) + 3f(x_1) + 3f(x_2) + 2f(x_3) + 3f(x_4) + ... + f(x_n)].",
+    hint:"Weight pattern repeats: 1,3,3,2,3,3,2,...,3,3,1. Multiply sum by 3h/8. n must be divisible by 3.",
+    template:`def simpsons_38(f, a, b, n):
+    """
+    Composite Simpson's 3/8 rule (n multiple of 3).
+    Returns: float - approximate integral
+    """
+    pass`,
+    tests:[
+      {name:"∫x⁴ dx from 0 to 1 (n=99)",setup:"f=lambda x:x**4\nresult=simpsons_38(f,0.0,1.0,99)",check:"abs(result-0.2)<1e-7",expected:"=0.2"},
+      {name:"∫cos(x) dx from 0 to π/2 (n=99)",setup:"import math\nf=lambda x:math.cos(x)\nresult=simpsons_38(f,0.0,math.pi/2,99)",check:"abs(result-1.0)<1e-7",expected:"=1.0"}
+    ]
+  },
+  {
+    id:"booles_rule", category:"Numerical Integration", title:"Boole's Rule",
+    description:"Composite Boole's rule (n must be multiple of 4): each group of 4 sub-intervals uses weights [7,32,12,32,7] * 2h/45.",
+    hint:"Divide [a,b] into n/4 groups of 4 sub-intervals. For each group of 5 points use 2h/45*(7f0+32f1+12f2+32f3+7f4). Sum all groups.",
+    template:`def booles_rule(f, a, b, n):
+    """
+    Composite Boole's rule (n must be multiple of 4).
+    Returns: float - approximate integral
+    """
+    pass`,
+    tests:[
+      {name:"∫x⁵ dx from 0 to 1 (n=4)",setup:"f=lambda x:x**5\nresult=booles_rule(f,0.0,1.0,4)",check:"abs(result-1/6)<1e-8",expected:"1/6≈0.16667"},
+      {name:"∫sin(x) dx from 0 to π (n=4)",setup:"import math\nf=lambda x:math.sin(x)\nresult=booles_rule(f,0.0,math.pi,4)",check:"abs(result-2.0)<1e-5",expected:"=2.0"}
+    ]
+  },
+  {
+    id:"weddles_rule", category:"Numerical Integration", title:"Weddle's Rule",
+    description:"Composite Weddle's rule (n multiple of 6): each group of 6 sub-intervals uses weights [1,5,1,6,1,5,1] * 3h/10.",
+    hint:"For each block of 7 points over 6 sub-intervals: 3h/10*(f0+5f1+f2+6f3+f4+5f5+f6). Apply this over n/6 blocks.",
+    template:`def weddles_rule(f, a, b, n):
+    """
+    Composite Weddle's rule (n must be multiple of 6).
+    Returns: float - approximate integral
+    """
+    pass`,
+    tests:[
+      {name:"∫x⁶ dx from 0 to 1 (n=6)",setup:"f=lambda x:x**6\nresult=weddles_rule(f,0.0,1.0,6)",check:"abs(result-1/7)<1e-5",expected:"1/7≈0.142857"},
+      {name:"∫exp(x) dx from 0 to 1 (n=6)",setup:"import math\nf=lambda x:math.exp(x)\nresult=weddles_rule(f,0.0,1.0,6)",check:"abs(result-(math.e-1))<1e-6",expected:"e-1≈1.71828"}
+    ]
+  },
+
+  // ── ODEs ──────────────────────────────────────────────────────────────────
+  {
+    id:"picard", category:"Ordinary Differential Equations", title:"Picard's Method",
+    description:"Solve y'=f(x,y), y(x0)=y0 using Picard's successive approximation: y_{k+1}(x) = y0 + ∫_{x0}^{x} f(t, y_k(t)) dt. Approximate integral numerically.",
+    hint:"Start y_0(x)=y0 everywhere. For each iteration, compute the integral numerically (trapezoidal or similar) over [x0, x]. Use n_steps sample points.",
+    template:`def picard(f, x0, y0, x, k=5, n_steps=100):
+    """
+    Solve y'=f(x,y), y(x0)=y0 using Picard's method.
+    Returns: float - approximate y(x)
+    """
+    pass`,
+    tests:[
+      {name:"y'=y, y(0)=1 → y(1)=e",setup:"import math\nf=lambda x,y:y\nresult=picard(f,0.0,1.0,1.0,k=10,n_steps=200)",check:"abs(result-math.e)<0.01",expected:"e≈2.71828"},
+      {name:"y'=x, y(0)=0 → y(1)=0.5",setup:"f=lambda x,y:x\nresult=picard(f,0.0,0.0,1.0,k=5,n_steps=100)",check:"abs(result-0.5)<1e-4",expected:"y(1)=0.5"}
+    ]
+  },
+  {
+    id:"taylor_ode", category:"Ordinary Differential Equations", title:"Taylor Series Method",
+    description:"Solve y'=f(x,y) using 2nd-order Taylor: y_{n+1} = y_n + h*y'_n + h²/2*y''_n where y''=f'_x+f'_y*f. Requires both f and its total derivative.",
+    hint:"y'' = ∂f/∂x + (∂f/∂y)*f. Step forward: y_new = y + h*f(x,y) + (h²/2)*f_prime(x,y).",
+    template:`def taylor_method(f, f_prime, x0, y0, x, n_steps=100):
+    """
+    Solve y'=f(x,y) using 2nd-order Taylor series.
+    f_prime(x,y) = y'' (total derivative of f).
+    Returns: float - approximate y(x)
+    """
+    pass`,
+    tests:[
+      {name:"y'=y → y(1)=e",setup:"import math\nf=lambda x,y:y\nfp=lambda x,y:y\nresult=taylor_method(f,fp,0.0,1.0,1.0,n_steps=100)",check:"abs(result-math.e)<1e-3",expected:"e≈2.71828"},
+      {name:"y'=x+y, y(0)=0 → y(0.5)",setup:"import math\nf=lambda x,y:x+y\nfp=lambda x,y:1+x+y\nresult=taylor_method(f,fp,0.0,0.0,0.5,n_steps=100)\nexact=2*math.exp(0.5)-0.5-1",check:"abs(result-exact)<1e-4",expected:"≈0.29744"}
+    ]
+  },
+  {
+    id:"euler", category:"Ordinary Differential Equations", title:"Euler Method",
+    description:"Solve y'=f(x,y), y(x0)=y0 using explicit Euler: y_{n+1} = y_n + h*f(x_n, y_n) with h=(x-x0)/n_steps.",
+    hint:"Simply: h=(x-x0)/n_steps. Loop n_steps times: x += h, y += h*f(x_old, y_old).",
+    template:`def euler(f, x0, y0, x, n_steps=1000):
+    """
+    Solve y'=f(x,y) using Euler's method.
+    Returns: float - approximate y(x)
+    """
+    pass`,
+    tests:[
+      {name:"y'=y, y(0)=1 → y(1)=e",setup:"import math\nf=lambda x,y:y\nresult=euler(f,0.0,1.0,1.0,n_steps=10000)",check:"abs(result-math.e)<0.01",expected:"e≈2.71828"},
+      {name:"y'=-y, y(0)=1 → y(1)=1/e",setup:"import math\nf=lambda x,y:-y\nresult=euler(f,0.0,1.0,1.0,n_steps=10000)",check:"abs(result-math.exp(-1))<0.01",expected:"1/e≈0.36788"}
+    ]
+  },
+  {
+    id:"modified_euler", category:"Ordinary Differential Equations", title:"Modified Euler (Heun's) Method",
+    description:"Improve on Euler using predictor-corrector: predict y* = y_n + h*f(x_n,y_n), then correct y_{n+1} = y_n + h/2*(f(x_n,y_n) + f(x_{n+1},y*)).",
+    hint:"This is RK2. Predictor = Euler step. Corrector = average of slopes at start and end of interval.",
+    template:`def modified_euler(f, x0, y0, x, n_steps=1000):
+    """
+    Solve y'=f(x,y) using Modified Euler (Heun's) method.
+    Returns: float - approximate y(x)
+    """
+    pass`,
+    tests:[
+      {name:"y'=y, y(0)=1 → y(1)=e",setup:"import math\nf=lambda x,y:y\nresult=modified_euler(f,0.0,1.0,1.0,n_steps=1000)",check:"abs(result-math.e)<0.001",expected:"e≈2.71828"},
+      {name:"y'=-y, y(0)=1 → y(1)=1/e",setup:"import math\nf=lambda x,y:-y\nresult=modified_euler(f,0.0,1.0,1.0,n_steps=1000)",check:"abs(result-math.exp(-1))<0.001",expected:"1/e≈0.36788"}
+    ]
+  },
+  {
+    id:"rk4", category:"Ordinary Differential Equations", title:"Runge-Kutta 4th Order (RK4)",
+    description:"Implement classical RK4: k1=h*f(x,y), k2=h*f(x+h/2,y+k1/2), k3=h*f(x+h/2,y+k2/2), k4=h*f(x+h,y+k3). y_{n+1}=y_n+(k1+2k2+2k3+k4)/6.",
+    hint:"Four slope evaluations per step. Weighted average: (k1 + 2*k2 + 2*k3 + k4)/6. Fourth-order accuracy with small constant.",
+    template:`def runge_kutta_4(f, x0, y0, x, n_steps=100):
+    """
+    Solve y'=f(x,y) using 4th-order Runge-Kutta.
+    Returns: float - approximate y(x)
+    """
+    pass`,
+    tests:[
+      {name:"y'=y, y(0)=1 → y(1)=e (n=10)",setup:"import math\nf=lambda x,y:y\nresult=runge_kutta_4(f,0.0,1.0,1.0,n_steps=10)",check:"abs(result-math.e)<1e-8",expected:"e≈2.71828"},
+      {name:"y'=-2xy, y(0)=1 → y(1)=1/e",setup:"import math\nf=lambda x,y:-2*x*y\nresult=runge_kutta_4(f,0.0,1.0,1.0,n_steps=100)",check:"abs(result-math.exp(-1))<1e-8",expected:"e^(-1)≈0.36788"},
+      {name:"y'=x+y, y(0)=0 → y(0.5)",setup:"import math\nf=lambda x,y:x+y\nresult=runge_kutta_4(f,0.0,0.0,0.5,n_steps=50)\nexact=2*math.exp(0.5)-0.5-1",check:"abs(result-exact)<1e-7",expected:"≈0.29744"}
+    ]
+  }
+];
+
+// ============================================================================
+// APPLICATION MODULE
+// ============================================================================
+const App = (() => {
+  let pyodide = null;
+  let currentTask = null;
+  let solved = new Set();
+  const STORAGE_KEY = 'nm_trainer_v4';
+
+  // ── PERSISTENCE ────────────────────────────────────────────────────────────
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) { const d = JSON.parse(raw); solved = new Set(d.solved || []); }
+    } catch(_) {}
+  }
+
+  function saveProgress() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({solved:[...solved]})); } catch(_) {}
+  }
+
+  function resetProgress() {
+    if (!confirm('Reset all progress? This cannot be undone.')) return;
+    solved = new Set();
+    saveProgress();
+    renderSidebar();
+    updateProgressCount();
+    showToast('Progress reset!', 'fail');
+  }
+
+  function toggleTheme() {
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+  }
+
+  function updateProgressCount() {
+    document.getElementById('progress-count').textContent = solved.size;
+    document.getElementById('total-count').textContent = TASKS.length;
+  }
+
+  // ── SIDEBAR ────────────────────────────────────────────────────────────────
+  function renderSidebar(filter = '') {
+    const container = document.getElementById('task-list');
+    const categories = {};
+    TASKS.forEach(t => { if (!categories[t.category]) categories[t.category]=[]; categories[t.category].push(t); });
+    const fl = filter.toLowerCase();
+    let html = '';
+    for (const [cat, tasks] of Object.entries(categories)) {
+      const filtered = tasks.filter(t => !fl || t.title.toLowerCase().includes(fl) || cat.toLowerCase().includes(fl));
+      if (!filtered.length) continue;
+      html += `<div class="category-header">${cat}</div>`;
+      filtered.forEach(task => {
+        const isSolved = solved.has(task.id);
+        const isActive = currentTask && currentTask.id === task.id;
+        html += `<div class="task-item${isSolved?' solved':''}${isActive?' active':''}" onclick="App.selectTask('${task.id}')">
+          <div class="status-dot"></div><span>${task.title}</span></div>`;
+      });
+    }
+    container.innerHTML = html;
+  }
+
+  function filterTasks(val) { renderSidebar(val); }
+
+  // ── TASK SELECTION ─────────────────────────────────────────────────────────
+  function selectTask(id) {
+    currentTask = TASKS.find(t => t.id === id);
+    if (!currentTask) return;
+    document.getElementById('task-title').innerHTML =
+      `${currentTask.title} <span class="category-badge">${currentTask.category}</span>`;
+    document.getElementById('task-description').textContent = currentTask.description;
+    const hintToggle = document.getElementById('hint-toggle');
+    const hintBox = document.getElementById('hint-box');
+    hintToggle.style.display = 'inline-block';
+    hintBox.textContent = currentTask.hint;
+    hintBox.classList.remove('open');
+    hintToggle.textContent = '💡 Show Hint';
+    const savedCode = localStorage.getItem(`nm_code_${id}`);
+    document.getElementById('code-editor').value = savedCode || currentTask.template;
+    document.getElementById('results-container').innerHTML = `
+      <div class="result-placeholder"><div class="icon">▶️</div>
+      <div>Press <b>Run Tests</b> or use <b>Ctrl+Enter</b></div></div>`;
+    renderSidebar(document.getElementById('search-input').value);
+    if (pyodide) document.getElementById('run-btn').disabled = false;
+  }
+
+  function toggleHint() {
+    const box = document.getElementById('hint-box');
+    const tog = document.getElementById('hint-toggle');
+    box.classList.toggle('open');
+    tog.textContent = box.classList.contains('open') ? '🙈 Hide Hint' : '💡 Show Hint';
+  }
+
+  function resetCode() {
+    if (!currentTask) return;
+    if (confirm('Reset code to template?')) {
+      document.getElementById('code-editor').value = currentTask.template;
+      localStorage.removeItem(`nm_code_${currentTask.id}`);
+    }
+  }
+
+  // ── PYTHON EXECUTION ───────────────────────────────────────────────────────
+  async function runCode() {
+    if (!currentTask || !pyodide) return;
+    const btn = document.getElementById('run-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Running...';
+
+    const code = document.getElementById('code-editor').value;
+    localStorage.setItem(`nm_code_${currentTask.id}`, code);
+
+    let globalError = null;
+    const results = [];
+
+    // First check code compiles
+    try { await pyodide.runPythonAsync(code); }
+    catch(e) { globalError = e.message || String(e); }
+
+    if (!globalError) {
+      for (const tc of currentTask.tests) {
+        results.push(await runSingleTest(code, tc));
+      }
+    }
+
+    const allPassed = !globalError && results.every(r => r.passed);
+    renderResults(results, allPassed, globalError);
+
+    if (allPassed) {
+      const isNew = !solved.has(currentTask.id);
+      solved.add(currentTask.id);
+      saveProgress();
+      updateProgressCount();
+      renderSidebar(document.getElementById('search-input').value);
+      showToast(isNew ? '🎉 All tests passed!' : '✅ All tests passed!', 'pass');
+    } else if (globalError) {
+      showToast('⚠️ Runtime error in your code', 'fail');
+    } else {
+      showToast('❌ Some tests failed', 'fail');
+    }
+
+    btn.disabled = false;
+    btn.textContent = '▶ Run Tests';
+  }
+
+  async function runSingleTest(userCode, tc) {
+    const indented = userCode.split('\n').map(l => '    ' + l).join('\n');
+    const setupLines = tc.setup.split('\n');
+    const setupIndented = setupLines.map(l => '    ' + l).join('\n');
+    const checkLine = '    _check_result = bool(' + tc.check + ')';
+
+    const fullCode = `
+import math, traceback as _tb
+_passed = False
+_error = ""
+try:
+${indented}
+${setupIndented}
+${checkLine}
+    _passed = _check_result
+except Exception as _e:
+    _error = _tb.format_exc()
+
+import js as _js
+_js.window._test_passed = _passed
+_js.window._test_error = _error
+`;
+    try {
+      window._test_passed = false;
+      window._test_error = '';
+      const runP = pyodide.runPythonAsync(fullCode);
+      const timeout = new Promise((_,rej) => setTimeout(() => rej(new Error('Timeout: possible infinite loop (>8s)')), 8000));
+      await Promise.race([runP, timeout]);
+      return { name: tc.name, passed: window._test_passed === true, error: window._test_error || null, expected: tc.expected };
+    } catch(e) {
+      return { name: tc.name, passed: false, error: e.message || String(e), expected: tc.expected };
+    }
+  }
+
+  // ── RENDER RESULTS ─────────────────────────────────────────────────────────
+  function renderResults(results, allPassed, globalError) {
+    const container = document.getElementById('results-container');
+    if (globalError) {
+      container.innerHTML = `
+        <div class="verdict-banner error">⚠️ Runtime Error</div>
+        <div class="test-case">
+          <div class="test-case-header" onclick="this.nextElementSibling.classList.toggle('open')">
+            <span class="tc-badge fail">ERR</span>
+            <span class="test-case-title">Check your code syntax and logic</span>
+            <span style="color:var(--text2);font-size:0.8rem">▾ Details</span>
+          </div>
+          <div class="test-case-body open">
+            <div class="tc-detail error-text">${escHtml(globalError)}</div>
+          </div>
+        </div>`;
+      return;
+    }
+    const passed = results.filter(r => r.passed).length;
+    const total = results.length;
+    const cls = allPassed ? 'pass' : 'fail';
+    const icon = allPassed ? '✅' : '❌';
+    let html = `<div class="verdict-banner ${cls}">${icon} ${passed}/${total} tests passed</div>`;
+    results.forEach((r, i) => {
+      const bc = r.passed ? 'pass' : 'fail';
+      const bt = r.passed ? 'PASS' : 'FAIL';
+      html += `<div class="test-case">
+        <div class="test-case-header" onclick="this.nextElementSibling.classList.toggle('open')">
+          <span class="tc-badge ${bc}">${bt}</span>
+          <span class="test-case-title">Test ${i+1}: ${escHtml(r.name)}</span>
+          <span style="color:var(--text2);font-size:0.8rem">▾</span>
+        </div>
+        <div class="test-case-body${r.error ? ' open' : ''}">
+          <div style="font-size:0.82rem;color:var(--text2);margin-top:4px"><b>Expected:</b> ${escHtml(r.expected)}</div>
+          ${r.error ? `<div class="tc-detail error-text">${escHtml(r.error)}</div>` : ''}
+          ${!r.error && r.passed ? '<div class="tc-detail" style="color:var(--pass)">✓ Passed numerical tolerance check</div>' : ''}
+          ${!r.error && !r.passed ? '<div class="tc-detail error-text">✗ Result outside numerical tolerance — check your algorithm</div>' : ''}
+        </div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  // ── UTILITIES ──────────────────────────────────────────────────────────────
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => { t.className = 'toast'; }, 2800);
+  }
+
+  function escHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── PYODIDE INIT ───────────────────────────────────────────────────────────
+  async function initPyodide() {
+    try {
+      pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/" });
+      document.getElementById('loading-overlay').style.display = 'none';
+      const s = document.getElementById('pyodide-status');
+      s.classList.add('ready');
+      s.innerHTML = '<div class="dot"></div><span>Python ready</span>';
+      if (currentTask) document.getElementById('run-btn').disabled = false;
+    } catch(e) {
+      document.getElementById('loading-overlay').innerHTML = `
+        <div style="color:#e74c3c;font-size:1rem;text-align:center;padding:2rem">
+          ⚠️ Failed to load Pyodide<br><small style="opacity:0.7">${e.message}</small>
+          <br><br><small>Check internet connection and refresh</small></div>`;
+    }
+  }
+
+  // ── INIT ───────────────────────────────────────────────────────────────────
+  function init() {
+    loadProgress();
+    renderSidebar();
+    updateProgressCount();
+
+    // Tab key support in editor
+    document.getElementById('code-editor').addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (!document.getElementById('run-btn').disabled) runCode();
+      }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const ta = e.target, s = ta.selectionStart, en = ta.selectionEnd;
+        ta.value = ta.value.substring(0,s) + '    ' + ta.value.substring(en);
+        ta.selectionStart = ta.selectionEnd = s + 4;
+      }
+    });
+
+    initPyodide();
+    if (TASKS.length > 0) selectTask(TASKS[0].id);
+  }
+
+  return { init, selectTask, filterTasks, runCode, resetCode, resetProgress, toggleTheme, toggleHint };
+})();
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+</body>
+</html>
