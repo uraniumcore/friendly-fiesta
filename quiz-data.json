@@ -1,5 +1,63 @@
 [
   {
+    "id": 101,
+    "question": "What does this function implement?",
+    "type": "multiple-choice",
+    "code": "def rule(f, a, b):\n    h = (b - a) / 4\n    result = 7 * f(a) + 32 * f(a + h) + 12 * f(a + 2*h)\n    result += 32 * f(a + 3*h) + 7 * f(b)\n    return result * 3 * h / 45",
+    "options": [
+      "Boole's rule",
+      "Simpson's 3/8 rule",
+      "Simpson's 1/3 rule",
+      "Weddle's rule",
+      "None of the standard rules"
+    ],
+    "answer": 0,
+    "explanation": "The weights 7, 32, 12, 32, 7 are the hallmark of Boole's rule (also called Bode's rule), which uses 5 equally-spaced points over 4 sub-intervals. The exact Boole coefficient is 2h/45 per application; the code uses 3h/45 — likely a typo in the exam question, but the weight pattern unambiguously identifies Boole's rule."
+  },
+  {
+    "id": 102,
+    "question": "What will this function return for f(x) = x² from a=0 to b=2 with n=4?",
+    "type": "multiple-choice",
+    "code": "def func(f, a, b, n):\n    h = (b - a) / n\n    result = (f(a) + f(b)) / 2\n    for i in range(1, n):\n        result += f(a + i * h)\n    return result * h",
+    "options": [
+      "2.25",
+      "2.75",
+      "2.666...",
+      "2.5",
+      "3.0"
+    ],
+    "answer": 1,
+    "explanation": "This is the composite trapezoidal rule with n=4 intervals, h=0.5. Evaluations: f(0)=0, f(0.5)=0.25, f(1)=1, f(1.5)=2.25, f(2)=4. Sum = (0+4)/2 + 0.25 + 1 + 2.25 = 2 + 3.5 = 5.5. Result = 5.5 × 0.5 = 2.75. (Exact value is 8/3 ≈ 2.667.)"
+  },
+  {
+    "id": 103,
+    "question": "The first divided difference f[xᵢ, xⱼ] is defined as:",
+    "type": "multiple-choice",
+    "options": [
+      "f(xⱼ) − f(xᵢ)",
+      "(f(xⱼ) − f(xᵢ)) / dx",
+      "(f(xⱼ) − f(xᵢ)) / (xᵢ + xⱼ)",
+      "(f(xⱼ) + f(xᵢ)) / (xⱼ − xᵢ)",
+      "(f(xⱼ) − f(xᵢ)) / (xⱼ − xᵢ)"
+    ],
+    "answer": 4,
+    "explanation": "The first divided difference is the slope between two points: f[xᵢ, xⱼ] = (f(xⱼ) − f(xᵢ)) / (xⱼ − xᵢ). This generalises to higher orders recursively."
+  },
+  {
+    "id": 104,
+    "question": "Newton's divided difference formula can handle:",
+    "type": "multiple-choice",
+    "options": [
+      "Only unequally spaced points",
+      "Both equally and unequally spaced points",
+      "Only monotonic functions",
+      "All of the above",
+      "Only equally spaced points"
+    ],
+    "answer": 1,
+    "explanation": "The key advantage of Newton's divided differences is that it works naturally for nodes at any spacing — equal or unequal. Newton's forward/backward formulas are the special case for equally-spaced nodes."
+  },
+  {
     "id": 1,
     "question": "What is the fundamental idea behind Newton-Cotes integration formulas?",
     "type": "multiple-choice",
@@ -11,180 +69,371 @@
       "Use Monte Carlo sampling to approximate the integral"
     ],
     "answer": 3,
-    "explanation": "Newton-Cotes formulas work by replacing f(x) with an interpolating polynomial through equally-spaced nodes, then integrating that polynomial exactly."
+    "explanation": "Newton-Cotes formulas (trapezoidal, Simpson's, Boole's, etc.) approximate ∫f(x)dx by substituting an interpolating polynomial through equally-spaced points and integrating that polynomial exactly."
   },
   {
     "id": 2,
-    "question": "For y' = 2x, y(0)=0, h=1, one step of Euler gives y₁=0, while Modified Euler gives:",
+    "question": "Consider solving y' = x² + y with y(0) = 1 using step size h = 0.1. Which method would typically give the most accurate result at x = 0.2?",
     "type": "multiple-choice",
     "options": [
-      "y₁ = 0.5",
-      "y₁ = 1.0",
-      "y₁ = 2.0",
-      "y₁ = 0",
-      "y₁ = 0.25"
+      "Modified Euler method",
+      "RK3 method",
+      "RK4 method",
+      "Euler's method",
+      "They would all give identical results"
     ],
-    "answer": 1,
-    "explanation": "Modified Euler: k₁ = h·f(0,0) = 1·0 = 0, k₂ = h·f(1, 0) = 1·2 = 2. y₁ = 0 + (0+2)/2 = 1.0. Exact answer is ∫₀¹ 2x dx = 1."
+    "answer": 2,
+    "explanation": "RK4 has a local truncation error of O(h⁵) and global error O(h⁴), making it far more accurate than Euler O(h²), Modified Euler O(h³), or RK3 O(h⁴) for the same step size."
   },
   {
     "id": 3,
-    "question": "For solving y' = x² + y with y(0)=1 using Taylor series up to h² term, what is y''(0)?",
-    "type": "multiple-choice",
-    "options": [
-      "2 + (x² + y)'",
-      "2 + y'",
-      "Need to compute: y' = x² + y, y'' = 2x + y'·f(x,y)",
-      "2x + y'",
-      "Need to compute: y' = x² + y, y'' = 2x + y' = 2x + (x² + y)"
-    ],
-    "answer": 4,
-    "explanation": "Differentiating y' = x²+y: y'' = 2x + y'. At x=0: y'(0)=0+1=1, so y''(0) = 0 + 1 = 1. The full expression is y'' = 2x + (x²+y)."
-  },
-  {
-    "id": 4,
-    "question": "For backward differences, ∇²yₙ is equivalent to:",
-    "type": "multiple-choice",
-    "options": [
-      "yₙ − 2yₙ₋₁ + yₙ₋₂",
-      "yₙ₊₁ − yₙ",
-      "(yₙ₊₁ − yₙ)²",
-      "yₙ − yₙ₋₁",
-      "yₙ₊₂ − 2yₙ₊₁ + yₙ"
-    ],
-    "answer": 0,
-    "explanation": "∇yₙ = yₙ − yₙ₋₁, so ∇²yₙ = ∇(∇yₙ) = ∇yₙ − ∇yₙ₋₁ = (yₙ−yₙ₋₁) − (yₙ₋₁−yₙ₋₂) = yₙ − 2yₙ₋₁ + yₙ₋₂."
-  },
-  {
-    "id": 5,
     "question": "The Lagrange basis polynomial Lᵢ(x) for point (xᵢ, yᵢ) has what property?",
     "type": "multiple-choice",
     "options": [
-      "Lᵢ(xᵢ) = 1 and Lᵢ(xⱼ) = 1 for all j",
-      "Lᵢ(xᵢ) = 0 and Lᵢ(xⱼ) = 0 for all j",
+      "Lᵢ(xⱼ) = 0 for all j including i",
+      "Lᵢ(xᵢ) = 1 and Lᵢ(xⱼ) = 0 for all j ≠ i",
       "Lᵢ(x) integrates to 1 over the interval",
-      "Lᵢ(xᵢ) = 1 and Lᵢ(xⱼ) = 0 for j ≠ i",
-      "Lᵢ(xᵢ) = yᵢ and Lᵢ(xⱼ) = 0 for all j ≠ i"
+      "Lᵢ(xᵢ) = yᵢ and Lᵢ(xⱼ) = 0 for all j ≠ i",
+      "Lᵢ(xᵢ) = 1 and Lᵢ(xⱼ) = 1 for all j"
+    ],
+    "answer": 1,
+    "explanation": "The Kronecker delta property: Lᵢ(xⱼ) = δᵢⱼ — equals 1 at its own node xᵢ and 0 at every other node. This ensures the interpolating polynomial passes exactly through each data point."
+  },
+  {
+    "id": 4,
+    "question": "The Modified Euler method (Heun's method) formula is:",
+    "type": "multiple-choice",
+    "options": [
+      "y_{n+1} = y_n + h f(x_n, y_n)",
+      "y_{n+1} = y_n + (h/2) [f(x_n, y_n) + f(x_n + h, y_n + h f(x_n, y_n))]",
+      "y_{n+1} = y_n + h f(x_n + h/2, y_n + (h/2) f(x_n, y_n))",
+      "y_{n+1} = y_n + (k₁ + 2k₂ + 2k₃ + k₄) / 6",
+      "y_{n+1} = y_n + h f(x_n + h, y_n) + (h/2) f(x_n, y_n)"
+    ],
+    "answer": 1,
+    "explanation": "Heun's / Modified Euler / improved Euler: predict with one Euler step, then correct using the average slope at both endpoints. Option a is plain Euler. Option c is the midpoint method. Option d is RK4."
+  },
+  {
+    "id": 5,
+    "question": "For backward differences, ∇²yₙ is equivalent to:",
+    "type": "multiple-choice",
+    "options": [
+      "(y_{n+1} − y_n)²",
+      "y_{n+1} − y_n",
+      "y_n − 2y_{n-1} + y_{n-2}",
+      "y_n − y_{n-1}",
+      "y_{n+2} − 2y_{n+1} + y_n"
+    ],
+    "answer": 2,
+    "explanation": "∇yₙ = yₙ − yₙ₋₁. Applying ∇ again: ∇²yₙ = ∇yₙ − ∇yₙ₋₁ = (yₙ − yₙ₋₁) − (yₙ₋₁ − yₙ₋₂) = yₙ − 2yₙ₋₁ + yₙ₋₂."
+  },
+  {
+    "id": 6,
+    "question": "What is being calculated in the following code?",
+    "type": "multiple-choice",
+    "code": "def table(y):\n    n = len(y)\n    table = [y.copy()]\n    for i in range(1, n):\n        diff = table[i-1]\n        current_diff = [diff[j+1] - diff[j] for j in range(n-i)]\n        table.append(current_diff)\n    return table",
+    "options": [
+      "Lagrange coefficients",
+      "Backward difference table",
+      "Divided difference table",
+      "Forward difference table",
+      "Newton-Cotes weights"
     ],
     "answer": 3,
-    "explanation": "The Kronecker delta property: Lᵢ(xⱼ) = δᵢⱼ. This ensures the interpolating polynomial passes exactly through each data point."
+    "explanation": "Each row is built by taking diff[j+1] − diff[j] (next minus current), which is the forward difference operator Δ. The result is the full forward difference table Δ⁰y, Δ¹y, Δ²y, … used in Newton's forward interpolation."
   },
   {
     "id": 7,
-    "question": "Given points (1,2), (3,4), and (5,6), what is the Lagrange basis polynomial L₁(x) for the second point (3,4) at x=3?",
+    "question": "Which interpolation method has local control — changing one data point affects only nearby intervals?",
     "type": "multiple-choice",
     "options": [
-      "1.5",
-      "0.25",
-      "0.0",
-      "1.25",
-      "1.0"
+      "Cubic spline interpolation",
+      "Newton's forward interpolation",
+      "Lagrange interpolation",
+      "All polynomial methods have global control",
+      "Newton's divided differences interpolation"
     ],
-    "answer": 4,
-    "explanation": "L₁(x) = (x−x₀)(x−x₂) / (x₁−x₀)(x₁−x₂) = (x−1)(x−5) / (3−1)(3−5). At x=3: (3−1)(3−5)/((2)(−2)) = (2)(−2)/(−4) = −4/−4 = 1.0. By the Kronecker delta property, L₁(x₁) always equals 1."
+    "answer": 0,
+    "explanation": "Cubic splines are piecewise polynomials — each piece is defined only between two consecutive nodes. Changing one data point only re-solves the adjacent segments, giving local control. Global polynomial methods (Lagrange, Newton) use all nodes everywhere, so one change affects the entire polynomial."
   },
   {
     "id": 8,
-    "question": "Implement Newton's forward interpolation method.",
-    "type": "open-ended",
-    "code": "def newton_forward_interpolation(x_pts, y_pts, x):\n    n = len(y_pts)\n    # Build forward difference table\n    diff = [list(y_pts)]\n    for j in range(1, n):\n        row = [diff[j-1][i+1] - diff[j-1][i] for i in range(n-j)]\n        diff.append(row)\n\n    h = x_pts[1] - x_pts[0]\n    p = (x - x_pts[0]) / h\n    result = diff[0][0]\n    p_term, fact = 1, 1\n    for k in range(1, n):\n        p_term *= (p - (k - 1))\n        fact *= k\n        result += (p_term * diff[k][0]) / fact\n    return result",
-    "explanation": "Newton's forward interpolation uses the forward difference table. The parameter p = (x − x₀)/h converts the interpolation point into a dimensionless offset from the first node."
+    "question": "Weddle's rule is particularly accurate because:",
+    "type": "multiple-choice",
+    "options": [
+      "It uses 7 points",
+      "It uses Chebyshev points instead of equally spaced points",
+      "It combines Simpson's 1/3 and 3/8 rules",
+      "It has a higher degree of precision than expected from interpolation",
+      "It uses an even number of points"
+    ],
+    "answer": 3,
+    "explanation": "Weddle's rule uses 6 intervals / 7 equally-spaced points and achieves degree of precision 7, even though fitting a degree-6 polynomial through 7 points would only guarantee precision 6. This 'super-convergence' arises because the error term cancels."
   },
   {
     "id": 9,
-    "question": "What will this function return for f(x) = x² from a=0 to b=2 with n=4?",
+    "question": "Picard's method is based on:",
     "type": "multiple-choice",
-    "code": "def func(f, a, b, n):\n    h = (b - a) / n\n    result = (f(a) + f(b)) / 2\n    for i in range(1, n):\n        result += f(a + i * h)\n    return result * h",
     "options": [
-      "2.666...",
-      "3.0",
-      "2.75",
-      "2.5",
-      "2.25"
+      "Polynomial interpolation",
+      "Iterative solution of an integral equation",
+      "Numerical differentiation",
+      "Converting the ODE to a difference equation",
+      "No iterative process"
     ],
-    "answer": 2,
-    "explanation": "h=0.5. Trapezoidal sum: (f(0)+f(2))/2 + f(0.5)+f(1)+f(1.5) = (0+4)/2 + 0.25+1+2.25 = 2+3.5 = 5.5. Result = 5.5 × 0.5 = 2.75. (Exact: 8/3 ≈ 2.667)"
+    "answer": 1,
+    "explanation": "The IVP y' = f(x,y), y(x₀)=y₀ is equivalent to y(x) = y₀ + ∫_{x₀}^x f(t, y(t)) dt. Picard's method builds successive approximations yₙ₊₁(x) = y₀ + ∫f(t, yₙ(t)) dt, converging to the true solution."
   },
   {
     "id": 10,
+    "question": "For composite integration with 9 equally spaced points, Boole's rule could be applied:",
+    "type": "multiple-choice",
+    "options": [
+      "Once over all 9 points",
+      "Cannot be applied directly to 9 points",
+      "Twice: first 5 points and last 5 points",
+      "Three times with 5 points each (overlapping)",
+      "Three times with 3 points each"
+    ],
+    "answer": 2,
+    "explanation": "Boole's rule requires exactly 5 points (4 sub-intervals) per application. With 9 equally-spaced points, apply it twice: once on points 1–5 and once on points 5–9, sharing the middle point. 4 + 4 = 8 sub-intervals total."
+  },
+  {
+    "id": 11,
+    "question": "The formula for Newton's forward interpolation (u = (x − x₀)/h) is:",
+    "type": "multiple-choice",
+    "options": [
+      "P(x) = Σ yᵢ ∏ (x − xⱼ)/(xᵢ − xⱼ)  [Lagrange form]",
+      "P(x) = y₀ + u Δy₀ + u(u−1)/2! Δ²y₀ + u(u−1)(u−2)/3! Δ³y₀ + …",
+      "P(x) = u y₀ + u(u+1)/2! Δy₀ + u(u+1)(u+2)/3! Δ³y₀ + …",
+      "P(x) = yₙ + u ∇yₙ + u(u+1)/2! ∇²yₙ + …  [backward form]",
+      "P(x) = y₀ + u Δy₀ + u(u+1)/2! Δ²y₀ + …  [wrong sign]"
+    ],
+    "answer": 1,
+    "explanation": "Newton's forward difference interpolation: P(u) = y₀ + C(u,1)Δy₀ + C(u,2)Δ²y₀ + … where C(u,k) = u(u−1)···(u−k+1)/k! are the falling-factorial binomial coefficients. The key sign is (u−1), (u−2), etc. — not (u+1)."
+  },
+  {
+    "id": 12,
+    "question": "For solving y' = x² + y with y(0)=1 using Taylor series up to the h² term, what is y''(0)?",
+    "type": "multiple-choice",
+    "options": [
+      "2 + y'",
+      "y'' = 2x + y' = 2x + (x² + y)  evaluated at (0,1) gives 1",
+      "2 + (x² + y)'",
+      "y'' = 2x + y' · f(x,y)  [incorrect chain rule]",
+      "2x + y'  [expression only, not evaluated]"
+    ],
+    "answer": 1,
+    "explanation": "Differentiate y' = x² + y with respect to x: y'' = 2x + y'. This is the full expression. At x=0, y=1: y'(0) = 0² + 1 = 1, so y''(0) = 2·0 + 1 = 1. The full substituted form is y'' = 2x + (x² + y)."
+  },
+  {
+    "id": 13,
     "question": "Given y = [2, 5, 10, 25, 100], what is Δ²y₀ from the forward difference table?",
     "type": "multiple-choice",
     "options": [
       "2",
       "0.5",
-      "5",
       "8",
-      "3"
+      "3",
+      "5"
     ],
     "answer": 0,
-    "explanation": "Δy₀ = 5−2=3, Δy₁ = 10−5=5. Then Δ²y₀ = Δy₁ − Δy₀ = 5−3 = 2."
-  },
-  {
-    "id": 11,
-    "question": "For composite integration with 9 equally spaced points, Boole's rule could be applied:",
-    "type": "multiple-choice",
-    "options": [
-      "Twice: first 5 points and last 5 points",
-      "Once over all 9 points",
-      "Cannot be applied directly to 9 points",
-      "Three times with 3 points each",
-      "Three times with 5 points each (overlapping)"
-    ],
-    "answer": 0,
-    "explanation": "Boole's rule requires exactly 5 points (4 subintervals) per application. With 9 points, apply it twice: points 1–5 and points 5–9, sharing the middle point."
-  },
-  {
-    "id": 12,
-    "question": "The correct formula for k₃ in RK4 is:",
-    "type": "multiple-choice",
-    "options": [
-      "k₃ = h f(xₙ + h/2, yₙ + k₄/2)",
-      "k₃ = h f(xₙ + h/2, yₙ + k₁/2)",
-      "k₃ = h f(xₙ + h, yₙ + k₃)",
-      "k₃ = h f(xₙ + h/2, yₙ + k₂)",
-      "k₃ = h f(xₙ + h, yₙ + 2k₂)"
-    ],
-    "answer": 3,
-    "explanation": "RK4 stages: k₁=hf(xₙ,yₙ), k₂=hf(xₙ+h/2, yₙ+k₁/2), k₃=hf(xₙ+h/2, yₙ+k₂/2). Wait — standard RK4 has k₃ using k₂/2, but option d uses k₂ (no /2). The standard form is k₃ = h·f(xₙ+h/2, yₙ+k₂/2). Select the closest correct option per exam context."
-  },
-  {
-    "id": 13,
-    "question": "Solving y' = x²+y with y(0)=1 using h=0.1 — which method gives the most accurate result at x=0.2?",
-    "type": "multiple-choice",
-    "options": [
-      "Euler's method",
-      "RK3 method",
-      "Modified Euler method",
-      "They would all give identical results",
-      "RK4 method"
-    ],
-    "answer": 4,
-    "explanation": "RK4 has local truncation error O(h⁵) vs O(h³) for RK3, O(h³) for Modified Euler, and O(h²) for Euler. Higher order → smaller error per step."
+    "explanation": "First differences (Δ¹): 5−2=3, 10−5=5, 25−10=15, 100−25=75. Second differences (Δ²): 5−3=2, 15−5=10, 75−15=60. The first entry of the second-difference row is Δ²y₀ = 2."
   },
   {
     "id": 14,
-    "question": "What is ∫₀² x³ dx using Simpson's 1/3 rule with h=1?",
+    "question": "The correct formula for k₃ in the classical RK4 method is:",
     "type": "multiple-choice",
     "options": [
-      "3.0",
-      "4.0",
-      "3.5",
-      "5.0",
-      "2.0"
+      "k₃ = h f(x_n + h/2,  y_n + k₂)",
+      "k₃ = h f(x_n + h/2,  y_n + k₁/2)",
+      "k₃ = h f(x_n + h/2,  y_n + k₂/2)",
+      "k₃ = h f(x_n + h,    y_n + 2k₃)",
+      "k₃ = h f(x_n + h,    y_n + k₃)"
     ],
-    "answer": 1,
-    "explanation": "Nodes: x₀=0, x₁=1, x₂=2. f(0)=0, f(1)=1, f(2)=8. Simpson's 1/3: (h/3)[f(x₀)+4f(x₁)+f(x₂)] = (1/3)[0+4+8] = 12/3 = 4.0. This matches the exact value ∫₀² x³dx = [x⁴/4]₀² = 4."
+    "answer": 2,
+    "explanation": "Classical RK4: k₁=hf(xₙ,yₙ), k₂=hf(xₙ+h/2, yₙ+k₁/2), k₃=hf(xₙ+h/2, yₙ+k₂/2), k₄=hf(xₙ+h, yₙ+k₃). Each stage uses half the previous slope increment — hence k₂/2, not k₂."
   },
   {
-    "id": 16,
-    "question": "What will this Euler method implementation output?",
+    "id": 15,
+    "question": "For solving y' = x + y², y(0) = 1 using Taylor series up to the h³ term, what is y''(0)?",
     "type": "multiple-choice",
-    "code": "def euler_method(f, x0, y0, h, n):\n    x, y = x0, y0\n    for i in range(n):\n        y = y + h * f(x, y)\n        x = x + h\n    return y\n\n# Solve y' = y, y(0)=1 at x=1 with h=0.5\nresult = euler_method(lambda x,y: y, 0, 1, 0.5, 2)",
     "options": [
-      "2.25",
-      "2.23"
+      "2",
+      "0",
+      "Unable to find derivatives",
+      "3",
+      "1"
+    ],
+    "answer": 3,
+    "explanation": "y' = x + y². Differentiating: y'' = 1 + 2y·y'. At x=0, y(0)=1: y'(0) = 0 + 1² = 1. Therefore y''(0) = 1 + 2·1·1 = 3."
+  },
+  {
+    "id": 20,
+    "question": "Why is Gauss-Seidel typically faster than Jacobi for solving large linear systems?",
+    "type": "multiple-choice",
+    "options": [
+      "It requires fewer floating-point operations per iteration.",
+      "It exploits sparsity patterns more effectively than Jacobi.",
+      "It uses updated values immediately, leading to faster convergence.",
+      "It avoids storing two copies of the solution vector.",
+      "It always converges regardless of the matrix properties."
+    ],
+    "answer": 2,
+    "explanation": "Gauss-Seidel's key advantage is that it uses the most recently computed values of x immediately within each iteration sweep, effectively incorporating more information and typically halving the number of iterations needed compared to Jacobi. Note: Gauss-Seidel does use in-place updates (one vector, not two), but the convergence speed advantage comes from the immediate-update property."
+  },
+  {
+    "id": 21,
+    "question": "In the Newton-Raphson method, the formula for x_{n+1} is:",
+    "type": "multiple-choice",
+    "options": [
+      "x_{n+1} = [a f(b) − b f(a)] / [f(b) − f(a)]  (Regula Falsi)",
+      "x_{n+1} = (x_n + x_{n-1}) / 2  (Bisection)",
+      "x_{n+1} = x_n − f(x_n) / f'(x_n)",
+      "x_{n+1} = x_n − f(x_n) (x_n − x_{n-1}) / [f(x_n) − f(x_{n-1})]  (Secant)",
+      "x_{n+1} = x_n + f(x_n) / f'(x_n)  (wrong sign)"
+    ],
+    "answer": 2,
+    "explanation": "Newton-Raphson derives x_{n+1} = x_n − f(x_n)/f'(x_n) by linearising f around x_n (first-order Taylor expansion) and solving for the root of that tangent line. It converges quadratically near a simple root."
+  },
+  {
+    "id": 22,
+    "question": "In Müller's method, how is the denominator sign chosen for numerical stability?",
+    "type": "multiple-choice",
+    "options": [
+      "Always use b + disc",
+      "Always use b − disc",
+      "Choose the sign giving the larger |b ± disc| to avoid cancellation",
+      "Use |disc| only, ignoring b",
+      "Choose the smaller denominator to minimize step size"
+    ],
+    "answer": 2,
+    "explanation": "Müller's method solves a quadratic fit through three points. When extracting the root, two candidates for the denominator exist: b + disc and b − disc. Choosing the one with larger absolute value avoids catastrophic cancellation (the same principle as in the numerically stable quadratic formula)."
+  },
+  {
+    "id": 23,
+    "question": "Which pair of assignments correctly implements the bisection method's interval update?",
+    "type": "multiple-choice",
+    "options": [
+      "if sign change in [a,c]: a, b = c, b  else: a, b = a, c",
+      "if sign change in [a,c]: a, b = b, c  else: a, b = c, a",
+      "if sign change in [a,c]: a, b = a, c  else: a, b = c, b",
+      "if sign change in [a,c]: b = c        else: a = c",
+      "if sign change in [a,c]: a, b = c, a  else: a, b = b, c"
+    ],
+    "answer": 3,
+    "explanation": "Bisection logic: compute c = (a+b)/2. If f(a)·f(c) < 0 the root lies in [a, c] → set b = c. Otherwise root lies in [c, b] → set a = c. This is concisely written as: if sign-change in [a,c]: b = c, else a = c. Options a–c use simultaneous tuple assignment which can reassign both ends incorrectly."
+  },
+  {
+    "id": 24,
+    "question": "Which method is used to find the dominant (largest) eigenvalue of a matrix?",
+    "type": "multiple-choice",
+    "options": [
+      "Gaussian elimination",
+      "Jacobi iteration (for linear systems)",
+      "LU factorization",
+      "Iterative matrix inversion",
+      "Power method"
+    ],
+    "answer": 4,
+    "explanation": "The power method (vector iteration) repeatedly multiplies by A and normalises, converging to the dominant eigenvector. The Rayleigh quotient then gives the dominant eigenvalue. Inverse power method finds the smallest eigenvalue."
+  },
+  {
+    "id": 25,
+    "question": "In the Jacobi eigenvalue algorithm, each plane rotation matrix G is chosen to:",
+    "type": "multiple-choice",
+    "options": [
+      "Compute the trace of the matrix",
+      "Find the matrix inverse",
+      "Scale the matrix by a constant",
+      "Zero out the off-diagonal element with the largest absolute value",
+      "Compute the matrix determinant"
+    ],
+    "answer": 3,
+    "explanation": "At each step the classical Jacobi eigenvalue algorithm selects the off-diagonal entry aᵢⱼ with maximum |aᵢⱼ| and constructs an orthogonal plane rotation G (Givens rotation) such that the (i,j) and (j,i) entries of Gᵀ A G become zero. Repeated application drives all off-diagonal elements toward zero."
+  },
+  {
+    "id": 26,
+    "question": "In the iterative method for matrix inversion (Schulz/Hotelling–Bodewig), the error matrix E is defined as:",
+    "type": "multiple-choice",
+    "options": [
+      "E = AB + I",
+      "E = B − A⁻¹",
+      "E = BA − I",
+      "E = A − B",
+      "E = AB − I"
+    ],
+    "answer": 4,
+    "explanation": "Given an approximate inverse B of A, the residual (error) is E = AB − I (or I − AB). The Schulz iteration B_{k+1} = B_k(2I − AB_k) drives E → 0, i.e. AB → I. When E = 0, B is the exact inverse."
+  },
+  {
+    "id": 27,
+    "question": "What is the necessary and sufficient condition for convergence of the Jacobi or Gauss-Seidel iterative method?",
+    "type": "multiple-choice",
+    "options": [
+      "The spectral radius of the iteration matrix satisfies ρ(T) < 1",
+      "A is strictly diagonally dominant",
+      "A is symmetric positive definite",
+      "A is tridiagonal",
+      "A has no zero diagonal elements"
     ],
     "answer": 0,
-    "explanation": "Step 1: y₁ = 1 + 0.5×1 = 1.5. Step 2: y₂ = 1.5 + 0.5×1.5 = 2.25. (Exact: e¹ ≈ 2.718, Modified Euler would give 2.4375)"
+    "explanation": "The iteration x^{k+1} = T x^k + c converges for every starting vector if and only if ρ(T) < 1 (spectral radius of the iteration matrix). Strict diagonal dominance (option b) is a widely-used sufficient condition that implies ρ(T) < 1, but ρ(T) < 1 is the exact characterisation."
+  },
+  {
+    "id": 28,
+    "question": "The classical Jacobi eigenvalue algorithm is applicable to which class of matrices?",
+    "type": "multiple-choice",
+    "options": [
+      "Only diagonal matrices",
+      "Only upper triangular matrices",
+      "Real symmetric matrices",
+      "Only singular matrices",
+      "Only matrices with purely complex eigenvalues"
+    ],
+    "answer": 2,
+    "explanation": "The Jacobi eigenvalue algorithm uses orthogonal similarity transformations (plane rotations) that preserve symmetry. It is designed for real symmetric matrices, whose eigenvalues are guaranteed real."
+  },
+  {
+    "id": 29,
+    "question": "What is the final form of the augmented matrix [A | b] after complete Gauss-Jordan elimination?",
+    "type": "multiple-choice",
+    "options": [
+      "[A | b] — unchanged",
+      "[D | w] where D is a diagonal matrix",
+      "[U | y] where U is upper triangular",
+      "[L | z] where L is lower triangular",
+      "[I | x] where I is the identity matrix"
+    ],
+    "answer": 4,
+    "explanation": "Gauss-Jordan elimination (forward and back elimination combined) reduces the augmented matrix to reduced row echelon form [I | x], where each column of A becomes a standard basis vector and x is the solution vector — no back-substitution step needed."
+  },
+  {
+    "id": 30,
+    "question": "Müller's method approximates the function locally using:",
+    "type": "multiple-choice",
+    "options": [
+      "A tangent line through the latest point",
+      "A straight line through two points (secant)",
+      "A cubic spline",
+      "A quadratic polynomial through three points",
+      "A cubic polynomial through four points"
+    ],
+    "answer": 3,
+    "explanation": "Müller's method generalises the secant method from linear to quadratic interpolation. It fits a parabola (quadratic polynomial) through the three most recent iterates and takes the root of that parabola closest to the last point as the next iterate. This gives superlinear convergence (order ≈ 1.84)."
+  },
+  {
+    "id": 31,
+    "question": "In fixed-point iteration x_{n+1} = g(x_n), local convergence is guaranteed if:",
+    "type": "multiple-choice",
+    "options": [
+      "|g'(x)| > 1 in the neighbourhood of the root",
+      "The initial guess is far from the root",
+      "g(x) is linear",
+      "g(x) is merely continuous",
+      "|g'(x)| < 1 in the neighbourhood of the root"
+    ],
+    "answer": 4,
+    "explanation": "By the Banach fixed-point theorem applied locally: if |g'(r)| < 1 at the fixed point r (i.e. g(r) = r), then the iteration converges for any starting point sufficiently close to r. If |g'(r)| > 1 the fixed point is repelling and the iteration diverges."
   }
 ]
