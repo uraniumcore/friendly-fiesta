@@ -43,7 +43,8 @@
     },
     {
         "id": 4,
-        "question": "What will this Euler method implementation output for the given problem?\n\ndef euler_method(f, x0, y0, h, n):\n    x, y = x0, y0\n    for i in range(n):\n        y = y + h * f(x, y)\n        x = x + h\n    return y\n\n# Solve y' = y, y(0) = 1 at x = 1 with h = 0.5\nresult = euler_method(lambda x, y: y, 0, 1, 0.5, 2)",
+        "question": "What will this Euler method implementation output for the given problem?",
+        "code": "def euler_method(f, x0, y0, h, n):\n    x, y = x0, y0\n    for i in range(n):\n        y = y + h * f(x, y)\n        x = x + h\n    return y\n\n# Solve y' = y, y(0) = 1 at x = 1 with h = 0.5\nresult = euler_method(lambda x, y: y, 0, 1, 0.5, 2)",
         "type": "multiple-choice",
         "options": [
             "2.22",
@@ -113,7 +114,8 @@
     },
     {
         "id": 9,
-        "question": "What will this function return for f(x) = x from 0 to 2 with n = 4?\n\ndef func(f, a, b, n):\n    h = (b - a) / n\n    result = (f(a) + f(b)) / 2\n    for i in range(1, n):\n        result += f(a + i*h)\n    return result * h",
+        "question": "What will this function return for f(x) = x from 0 to 2 with n = 4?",
+        "code": "def func(f, a, b, n):\n    h = (b - a) / n\n    result = (f(a) + f(b)) / 2\n    for i in range(1, n):\n        result += f(a + i*h)\n    return result * h",
         "type": "multiple-choice",
         "options": [
             "1.5",
@@ -169,7 +171,8 @@
     },
     {
         "id": 13,
-        "question": "What does this function implement?\n\ndef rule(f, a, b):\n    h = (b - a) / 4\n    result = 7* f(a) + 32* f(a + h) + 12* f(a + 2*h)\n    result += 32 * f(a + 3*h) + 7 * f(b)\n    return result * 3*h / 45",
+        "question": "What does this function implement?",
+        "code": "def rule(f, a, b):\n    h = (b - a) / 4\n    result = 7* f(a) + 32* f(a + h) + 12* f(a + 2*h)\n    result += 32 * f(a + 3*h) + 7 * f(b)\n    return result * 3*h / 45",
         "type": "multiple-choice",
         "options": [
             "Trapezoidal rule",
@@ -281,7 +284,8 @@
     },
     {
         "id": 21,
-        "question": "What is the correct Muller's method denominator selection for stability?\n\nDisc = sqrt(b**2 - 4*a*c)\nif abs(b + disc) > abs(b - disc):\n    denom = b + disc\nelse:\n    denom = b - disc\nx_new = x2 - (2*c) / denom",
+        "question": "What is the correct Muller's method denominator selection for stability?",
+        "code": "Disc = sqrt(b**2 - 4*a*c)\nif abs(b + disc) > abs(b - disc):\n    denom = b + disc\nelse:\n    denom = b - disc\nx_new = x2 - (2*c) / denom",
         "type": "multiple-choice",
         "options": [
             "Should use b + disc always",
@@ -292,20 +296,6 @@
         ],
         "answer": 2,
         "explanation": "In Muller's method, the denominator is chosen to maximize stability and avoid division by a small number. The selection logic (choosing b + disc or b - disc depending on which has larger magnitude) ensures numerical stability, so the given implementation is correct."
-    },
-    {
-        "id": 22,
-        "question": "Which code correctly implements the bisection method's interval update?\n\ndef bisection_step(a, b, f):\n    c = (a + b)/2\n    if f(c) == 0:\n        return c\n    if f(a) * f(c) < 0:\n        # Update interval\n        return ???\n    else:\n        # Update interval\n        return ???",
-        "type": "multiple-choice",
-        "options": [
-            "a, b = c and b, a = a, c",
-            "a, b = b, c and a, b = c, a",
-            "a, b = a, c and a, b = c, b",
-            "a, b = c, b and a, b = c, b",
-            "a, b = a, c and b = b, c"
-        ],
-        "answer": 4,
-        "explanation": "In the bisection method, after computing the midpoint c, the interval is updated depending on the sign of f(c). If f(a)*f(c) < 0, the root lies in [a,c], so update b = c. Otherwise, the root lies in [c,b], so update a = c. This ensures the interval always brackets the root."
     },
     {
         "id": 23,
