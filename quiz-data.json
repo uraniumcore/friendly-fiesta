@@ -435,5 +435,204 @@
     ],
     "answer": 4,
     "explanation": "By the Banach fixed-point theorem applied locally: if |g'(r)| < 1 at the fixed point r (i.e. g(r) = r), then the iteration converges for any starting point sufficiently close to r. If |g'(r)| > 1 the fixed point is repelling and the iteration diverges."
+  },
+  {
+    "id": 32,
+    "question": "What is the fundamental idea behind Newton-Cotes integration formulas?",
+    "type": "multiple-choice",
+    "options": [
+      "Transform the integral into a differential equation",
+      "Use Monte Carlo sampling to approximate the integral",
+      "Replace the integrand with a Taylor series expansion",
+      "Replace the integrand with an interpolating polynomial and integrate it",
+      "All of the above are correct"
+    ],
+    "answer": 3,
+    "explanation": "Newton-Cotes formulas (trapezoidal, Simpson's, Boole's, etc.) replace f(x) with an interpolating polynomial through equally-spaced nodes and then integrate that polynomial exactly."
+  },
+  {
+    "id": 33,
+    "question": "For y' = 2x, y(0)=0, h=1, one Euler step gives y₁=0. What does Modified Euler (Heun's method) give?",
+    "type": "multiple-choice",
+    "options": [
+      "y₁ = 0.25",
+      "y₁ = 1.0",
+      "y₁ = 0.5",
+      "y₁ = 2.0",
+      "y₁ = 0"
+    ],
+    "answer": 1,
+    "explanation": "Euler: y₁ = 0 + 1·f(0,0) = 0. Modified Euler (Heun): k₁ = h·f(0,0) = 0, k₂ = h·f(1, 0) = 2. y₁ = 0 + (0+2)/2 = 1.0. This matches the exact answer ∫₀¹ 2x dx = 1."
+  },
+  {
+    "id": 34,
+    "question": "For solving y' = x + y², y(0) = 1 using a Taylor series up to the h³ term, what is y''(0)?",
+    "type": "multiple-choice",
+    "options": [
+      "Unable to find derivatives",
+      "1",
+      "2",
+      "3",
+      "0"
+    ],
+    "answer": 3,
+    "explanation": "Differentiate y' = x + y²: y'' = 1 + 2y·y'. At x=0: y(0)=1, y'(0) = 0 + 1² = 1. Therefore y''(0) = 1 + 2·1·1 = 3."
+  },
+  {
+    "id": 35,
+    "question": "What does this function implement?",
+    "type": "multiple-choice",
+    "code": "def rule(f, a, b):\n    h = (b - a)/4\n    result = 7*f(a) + 32*f(a+h) + 12*f(a+2*h) + 32*f(a+3*h) + 7*f(b)\n    return result * 3 * h / 45",
+    "options": [
+      "Simpson's 3/8 rule",
+      "Wrong method (incorrect coefficient)",
+      "Simpson's 1/3 rule",
+      "Weddle's rule",
+      "Boole's rule"
+    ],
+    "answer": 4,
+    "explanation": "The weight pattern 7, 32, 12, 32, 7 over 5 equally-spaced points (4 sub-intervals) is the hallmark of Boole's rule (also called Bode's rule). The correct Boole coefficient is 2h/45; the code uses 3h/45 which is a typo in the exam question, but the weights unambiguously identify Boole's rule."
+  },
+  {
+    "id": 36,
+    "question": "The correct formula for k₃ in classical 4th-order Runge-Kutta (RK4) is:",
+    "type": "multiple-choice",
+    "options": [
+      "k₃ = hf(xₙ + h,   yₙ + 2k₃)",
+      "k₃ = hf(xₙ + h/2, yₙ + k₂)",
+      "k₃ = hf(xₙ + h/2, yₙ + k₂/2)",
+      "k₃ = hf(xₙ + h/2, yₙ + k₁/2)",
+      "k₃ = hf(xₙ + h,   yₙ + k₃)"
+    ],
+    "answer": 2,
+    "explanation": "Standard RK4 stages: k₁=hf(xₙ,yₙ), k₂=hf(xₙ+h/2, yₙ+k₁/2), k₃=hf(xₙ+h/2, yₙ+k₂/2), k₄=hf(xₙ+h, yₙ+k₃). Each midpoint stage uses half the previous k."
+  },
+  {
+    "id": 37,
+    "question": "Newton's divided difference formula can handle:",
+    "type": "multiple-choice",
+    "options": [
+      "Only monotonic functions",
+      "Both equally and unequally spaced points",
+      "Only unequally spaced points",
+      "Only equally spaced points",
+      "All of the above"
+    ],
+    "answer": 1,
+    "explanation": "Divided differences are defined for any node spacing. This is their main advantage over Newton's forward/backward formulas, which require equally-spaced nodes."
+  },
+  {
+    "id": 38,
+    "question": "Weddle's rule is particularly accurate because:",
+    "type": "multiple-choice",
+    "options": [
+      "It has a higher degree of precision than expected from its interpolation degree",
+      "It uses 7 points",
+      "It combines Simpson's 1/3 and 3/8 rules",
+      "It uses an even number of sub-intervals",
+      "It uses Chebyshev points instead of equally-spaced points"
+    ],
+    "answer": 0,
+    "explanation": "Weddle's rule uses 6 sub-intervals (7 points) and achieves degree of precision 7, even though a degree-6 interpolating polynomial through 7 points would normally only guarantee precision 6. This super-convergence arises because the leading error term cancels."
+  },
+  {
+    "id": 39,
+    "question": "The formula for Newton's forward interpolation for u = (x − x₀)/h is:",
+    "type": "multiple-choice",
+    "options": [
+      "P(x) = Lagrange form  Σ yᵢ ∏(x−xⱼ)/(xᵢ−xⱼ)",
+      "P(x) = y₀ + u Δy₀ + u(u−1)/2! Δ²y₀ + u(u−1)(u−2)/3! Δ³y₀ + …",
+      "P(x) = u y₀ + u(u+1)/2! Δy₀ + u(u+1)(u+2)/3! Δ³y₀ + …",
+      "P(x) = y₀ + u Δy₀ + u(u+1)/2! Δ²y₀ + …  (wrong sign)",
+      "P(x) = yₙ + u ∇yₙ + u(u+1)/2! ∇²yₙ + …  (backward form)"
+    ],
+    "answer": 1,
+    "explanation": "Newton's forward formula uses falling-factorial binomial coefficients: P(u) = y₀ + C(u,1)Δy₀ + C(u,2)Δ²y₀ + … where C(u,k) = u(u−1)(u−2)···(u−k+1)/k!. The key sign is (u−1), (u−2), … — not (u+1)."
+  },
+  {
+    "id": 40,
+    "question": "Which interpolation method has local control — changing one data point affects only nearby intervals?",
+    "type": "multiple-choice",
+    "options": [
+      "Cubic spline interpolation",
+      "Newton's forward interpolation",
+      "Lagrange interpolation",
+      "All polynomial methods have global control",
+      "Newton's divided differences interpolation"
+    ],
+    "answer": 0,
+    "explanation": "Cubic splines are piecewise polynomials. Each piece spans only two adjacent nodes, so modifying one data point only re-computes the neighbouring segments — local control. Lagrange and Newton polynomial methods use all nodes globally, so one change ripples everywhere."
+  },
+  {
+    "id": 41,
+    "question": "The Modified Euler method (Heun's method) formula is:",
+    "type": "multiple-choice",
+    "options": [
+      "y_{n+1} = y_n + (h/2)[f(x_n,y_n) + f(x_{n+1}, y_n + h f(x_n,y_n))]",
+      "y_{n+1} = y_n + h f(x_n, y_n)",
+      "y_{n+1} = y_n + (k₁ + 2k₂ + 2k₃ + k₄)/6",
+      "y_{n+1} = y_n + h f(x_n + h, y_n + (h/2) f(x_n,y_n))",
+      "y_{n+1} = y_n + h f(x_n + h/2, y_n + (h/2) f(x_n,y_n))"
+    ],
+    "answer": 0,
+    "explanation": "Heun's / Modified Euler: predict y* = y_n + h·f(x_n, y_n), then correct using the average slope: y_{n+1} = y_n + (h/2)[f(x_n, y_n) + f(x_{n+1}, y*)]. Option b is plain Euler, option c is RK4, option e is the midpoint method."
+  },
+  {
+    "id": 42,
+    "question": "The classical 3rd-order Runge-Kutta method (Kutta's form) uses:",
+    "type": "multiple-choice",
+    "options": [
+      "k₁=hf(xₙ,yₙ),  k₂=hf(xₙ+h/3, yₙ+k₁/3),  k₃=hf(xₙ+2h/3, yₙ+2k₁/3)",
+      "k₁=hf(xₙ,yₙ),  k₂=hf(xₙ+h,   yₙ+k₁),      k₃=hf(xₙ+h,   yₙ−k₁+2k₂)",
+      "k₁=hf(xₙ,yₙ),  k₂=hf(xₙ+h/3, yₙ+k₁/3),  k₃=hf(xₙ+2h/3, yₙ+2k₂/3)",
+      "k₁=hf(xₙ,yₙ),  k₂=hf(xₙ+h/2, yₙ+k₁/2),  k₃=hf(xₙ+h,   yₙ−k₁+2k₂)",
+      "k₁=hf(xₙ,yₙ),  k₂=hf(xₙ+h/2, yₙ+k₁/2),  k₃=hf(xₙ+h/2, yₙ+k₂/2)"
+    ],
+    "answer": 3,
+    "explanation": "The classical (Kutta's) 3rd-order RK: k₁=hf(xₙ,yₙ), k₂=hf(xₙ+h/2, yₙ+k₁/2), k₃=hf(xₙ+h, yₙ−k₁+2k₂). Final update: yₙ₊₁ = yₙ + (k₁+4k₂+k₃)/6. Option 2 is Heun's 3rd-order RK; option 4 is a stage of RK4."
+  },
+  {
+    "id": 43,
+    "question": "What is computed by this code?",
+    "type": "multiple-choice",
+    "code": "def table(y):\n    n = len(y)\n    table = [y.copy()]\n    for i in range(1, n):\n        diff = table[i-1]\n        current_diff = [diff[j+1] - diff[j] for j in range(n-i)]\n        table.append(current_diff)\n    return table",
+    "options": [
+      "Wrong difference table",
+      "Lagrange coefficients",
+      "Divided difference table",
+      "Backward difference table",
+      "Forward difference table"
+    ],
+    "answer": 4,
+    "explanation": "Each row is built as diff[j+1] − diff[j] — the forward difference operator Δ applied repeatedly. The result is the forward difference table: row 0 = y, row 1 = Δ¹y, row 2 = Δ²y, etc., used in Newton's forward interpolation."
+  },
+  {
+    "id": 44,
+    "question": "Given f[x₀]=2, f[x₁]=5, f[x₀,x₁]=3, f[x₁,x₂]=4 with x₀=1, x₁=3, x₂=4, what is f[x₀,x₁,x₂]?",
+    "type": "multiple-choice",
+    "options": [
+      "1/2",
+      "3/4",
+      "5/2",
+      "4/3",
+      "1/3"
+    ],
+    "answer": 4,
+    "explanation": "f[x₀,x₁,x₂] = (f[x₁,x₂] − f[x₀,x₁]) / (x₂ − x₀) = (4 − 3) / (4 − 1) = 1/3."
+  },
+  {
+    "id": 45,
+    "question": "What will this composite trapezoidal function return for f(x) = x² from 0 to 2 with n = 4?",
+    "type": "multiple-choice",
+    "code": "def func(f, a, b, n):\n    h = (b - a) / n\n    result = (f(a) + f(b)) / 2\n    for i in range(1, n):\n        result += f(a + i * h)\n    return result * h",
+    "options": [
+      "2.666…",
+      "2.75",
+      "2.5",
+      "2.25",
+      "3.0"
+    ],
+    "answer": 1,
+    "explanation": "Composite trapezoidal rule, h=0.5: result = (f(0)+f(2))/2 + f(0.5)+f(1)+f(1.5) = (0+4)/2 + 0.25+1+2.25 = 2+3.5 = 5.5. Return 5.5×0.5 = 2.75. (Exact integral is 8/3 ≈ 2.667; trapezoidal overestimates for convex f.)"
   }
 ]
