@@ -432,6 +432,15 @@
   <div class="setup-card">
     <h2>Configure your session</h2>
     <p class="sub" id="setup-sub">Loading…</p>
+    
+    <div class="setup-row">
+      <label>Dataset</label>
+      <div class="count-pills" id="dataset-pills">
+        <button class="pill" id="pill-curated" onclick="selectDataset('new-quiz-data.json', this)">Curated (20 qs)</button>
+        <button class="pill active" id="pill-full" onclick="selectDataset('quiz-data.json', this)">All questions (55 qs)</button>
+      </div>
+    </div>
+    
     <div class="setup-row">
       <label>Questions</label>
       <div class="count-pills" id="count-pills"></div>
@@ -493,6 +502,7 @@ let activeQuestions = [];  // subset for current session
 let selections      = {};  // { qi: optionIndex }
 let submitted       = false;
 let chosenCount     = null;
+let currentDataset  = 'quiz-data.json';  // selected dataset file
 
 const PRESETS = [5, 10, 15, 20];
 const LABELS  = ['a','b','c','d','e','f'];
@@ -501,15 +511,19 @@ const LABELS  = ['a','b','c','d','e','f'];
 // BOOT
 // ─────────────────────────────────────────────────────────────────────────────
 async function init() {
+  await loadDataset(currentDataset);
+}
+
+async function loadDataset(filename) {
   setPlaceholder(`
     <div class="state-card">
       <div class="icon">⟳</div>
       <h3>Loading questions…</h3>
-      <p>Fetching <code>quiz-data.json</code></p>
+      <p>Fetching <code>${filename}</code></p>
     </div>`);
 
   try {
-    const res = await fetch('quiz-data.json');
+    const res = await fetch(filename);
     if (!res.ok) throw new Error(`HTTP ${res.status} — file not found`);
     const data = await res.json();
     if (!Array.isArray(data)) throw new Error('Expected a JSON array.');
@@ -518,15 +532,16 @@ async function init() {
     if (allQuestions.length === 0)
       throw new Error('No multiple-choice questions found in the file.');
 
+    currentDataset = filename;
     setPlaceholder('');
     showSetup();
   } catch (err) {
     setPlaceholder(`
       <div class="state-card error">
         <div class="icon">✕</div>
-        <h3>Could not load quiz-data.json</h3>
+        <h3>Could not load ${filename}</h3>
         <p>${escHtml(err.message)}<br><br>
-        Make sure <code>quiz-data.json</code> is in the same folder as this HTML file,
+        Make sure <code>${filename}</code> is in the same folder as this HTML file,
         then open it via a local server:<br>
         <code>python -m http.server 8000</code></p>
       </div>`);
@@ -790,6 +805,18 @@ function updateSubmitMeta() {
   } else {
     meta.innerHTML = `<strong>${unanswered}</strong> unanswered — you can still submit now.`;
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DATASET SELECTOR
+// ─────────────────────────────────────────────────────────────────────────────
+async function selectDataset(filename, btn) {
+  // Update UI
+  document.querySelectorAll('#dataset-pills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  
+  // Reload dataset
+  await loadDataset(filename);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

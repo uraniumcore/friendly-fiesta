@@ -1,0 +1,408 @@
+[
+    {
+        "id": 1,
+        "question": "Which interpolation method has local control—changing one data point affects only nearby intervals?",
+        "type": "multiple-choice",
+        "options": [
+            "Newton's forward interpolation",
+            "Cubic spline interpolation",
+            "Lagrange interpolation",
+            "Newton's divided differences interpolation",
+            "All polynomial methods have global control"
+        ],
+        "answer": 1,
+        "explanation": "Cubic spline interpolation has local control because adjusting one data point only affects the spline segments near that point. In contrast, global polynomial methods like Lagrange or Newton interpolation affect the entire curve when a single point changes."
+    },
+    {
+        "id": 2,
+        "question": "Weddle's rule is particularly accurate because:",
+        "type": "multiple-choice",
+        "options": [
+            "It uses 7 points",
+            "It uses Chebyshev points instead of equally spaced points",
+            "It uses an even number of points",
+            "It has a higher degree of precision than expected from interpolation",
+            "It combines Simpson's 1/3 and 3/8 rules"
+        ],
+        "answer": 3,
+        "explanation": "Weddle's rule is a numerical integration method based on a 6th-degree polynomial over six subintervals (7 points) and achieves a higher degree of precision than expected, making it particularly accurate compared to other simple Newton-Cotes formulas."
+    },
+    {
+        "id": 3,
+        "question": "For the RK4 method, k2 is calculated as:",
+        "type": "multiple-choice",
+        "options": [
+            "f(x_n + h, y_n + h k1)",
+            "f(x_n, y_n)",
+            "f(x_n + h/2, y_n + (h/2) k1)",
+            "f(x_n + h, y_n + h k3)",
+            "f(x_n + h/2, y_n + (h/2) k2)"
+        ],
+        "answer": 2,
+        "explanation": "In the RK4 (Runge-Kutta 4th order) method, k2 is calculated at the midpoint using the formula k2 = f(x_n + h/2, y_n + (h/2) k1). This gives a better estimate of the slope for the next step by averaging the slope at the start and midpoint of the interval."
+    },
+    {
+        "id": 4,
+        "question": "What will this Euler method implementation output for the given problem?\n\ndef euler_method(f, x0, y0, h, n):\n    x, y = x0, y0\n    for i in range(n):\n        y = y + h * f(x, y)\n        x = x + h\n    return y\n\n# Solve y' = y, y(0) = 1 at x = 1 with h = 0.5\nresult = euler_method(lambda x, y: y, 0, 1, 0.5, 2)",
+        "type": "multiple-choice",
+        "options": [
+            "2.22",
+            "2.20",
+            "2.25",
+            "2.21",
+            "2.23"
+        ],
+        "answer": 2,
+        "explanation": "Using the Euler method: Step 1: y1 = 1 + 0.5*1 = 1.5, Step 2: y2 = 1.5 + 0.5*1.5 = 2.25. So the output at x = 1 is 2.25."
+    },
+    {
+        "id": 5,
+        "question": "Picard's method is based on:",
+        "type": "multiple-choice",
+        "options": [
+            "Converting ODE to difference equation",
+            "Numerical differentiation",
+            "Polynomial interpolation",
+            "Iterative solution of integral equation",
+            "No answer"
+        ],
+        "answer": 3,
+        "explanation": "Picard's method solves an initial value problem by rewriting the differential equation as an integral equation and then using successive approximations iteratively. Each iteration improves the approximation of the solution."
+    },
+    {
+        "id": 6,
+        "question": "Given the forward difference table below, what is 4y0? y = [2, 5, 10, 25, 100]",
+        "type": "multiple-choice",
+        "options": [
+            "5",
+            "2",
+            "8",
+            "3",
+            "0.5"
+        ],
+        "answer": 2,
+        "explanation": "y0 is the first value in the sequence, y0 = 2. Therefore, 4y0 = 4 * 2 = 8."
+    },
+    {
+        "id": 7,
+        "question": "Consider solving y' = x^2 + y with y(0) = 1 using step size h = 0.1. Which method would typically give the most accurate result at x = 0.2?",
+        "type": "multiple-choice",
+        "options": [
+            "Modified Euler method",
+            "RK3 method",
+            "Euler's method",
+            "RK4 method",
+            "They would all give identical results"
+        ],
+        "answer": 3,
+        "explanation": "The RK4 (Runge-Kutta 4th order) method is generally the most accurate among the listed methods for the same step size because it uses four slope evaluations per step and achieves 4th-order accuracy, reducing the local truncation error compared to Euler, Modified Euler, or RK3 methods."
+    },
+    {
+        "id": 8,
+        "question": "For composite integration with 9 equally spaced points, Boole's rule could be applied:",
+        "type": "multiple-choice",
+        "options": [
+            "Once over all 9 points",
+            "Cannot be applied directly to 9 points",
+            "Twice: first 5 points and last 5 points",
+            "Three times with 5 points each (overlapping)",
+            "Three times with 3 points each"
+        ],
+        "answer": 2,
+        "explanation": "Boole's rule requires 5 points per application. With 9 points, it cannot be applied once over all points. The correct approach is to apply it twice: first over points 1–5 and then over points 5–9, overlapping at the fifth point."
+    },
+    {
+        "id": 9,
+        "question": "What will this function return for f(x) = x from 0 to 2 with n = 4?\n\ndef func(f, a, b, n):\n    h = (b - a) / n\n    result = (f(a) + f(b)) / 2\n    for i in range(1, n):\n        result += f(a + i*h)\n    return result * h",
+        "type": "multiple-choice",
+        "options": [
+            "1.5",
+            "2.0",
+            "2.5",
+            "3.0",
+            "4.0"
+        ],
+        "answer": 1,
+        "explanation": "This function implements the composite trapezoidal rule. With f(x)=x, a=0, b=2, n=4: h=0.5, sum=(0+2)/2 + 0.5+1+1.5 = 4.0, multiply by h=0.5 gives 2.0."
+    },
+    {
+        "id": 10,
+        "question": "The first divided difference f[xi, xj] is defined as:",
+        "type": "multiple-choice",
+        "options": [
+            "f(x) - f(x)",
+            "(f(x) - f(x)) / dx",
+            "(f(x) - f(x)) / (x; + xi)",
+            "(f(x) + f(x)) / (x; - Xi)",
+            "(f(x) - f(x)) / (xj - xi)"
+        ],
+        "answer": 4,
+        "explanation": "The first divided difference is defined as f[xi, xj] = (f(xj) - f(xi)) / (xj - xi), which represents the slope of the secant line between the points (xi, f(xi)) and (xj, f(xj))."
+    },
+    {
+        "id": 11,
+        "question": "The weights for Boole's rule (for 5 equally spaced points x0 to x4) are:",
+        "type": "multiple-choice",
+        "options": [
+            "7, 32, 12, 32, 7 multiplied by 2h/45",
+            "1, 4, 2, 4, 2, 4, 1 multiplied by h/3",
+            "1, 4, 2, 4, 1 multiplied by h/3",
+            "1, 3, 3, 1 multiplied by 3h/8",
+            "1, 7, 12, 7, 1 multiplied by 3h/10"
+        ],
+        "answer": 0,
+        "explanation": "Boole's rule (Newton-Cotes 4th-order, 5 points) uses the weights 7, 32, 12, 32, 7 multiplied by 2h/45 to approximate the integral over equally spaced points."
+    },
+    {
+        "id": 12,
+        "question": "The 3rd order Runge-Kutta (RK3) formula uses:",
+        "type": "multiple-choice",
+        "options": [
+            "k1 = h f(x_n, y_n), k2 = h f(x_n + h/2, y_n + k1/2), k3 = h f(x_n + h/2, y_n + k2/2)",
+            "k1 = h f(x_n, y_n), k2 = h f(x_n + h/3, y_n + k1/3), k3 = h f(x_n + 2h/3, y_n + 2k2/3)",
+            "k1 = h f(x_n, y_n), k2 = h f(x_n + h/2, y_n + k1/2), k3 = h f(x_n + h, y_n - k1 + 2k2)",
+            "k1 = h f(x_n, y_n), k2 = h f(x_n + h/3, y_n + k1/3), k3 = h f(x_n + 2h/3, y_n + 2k1/3)",
+            "k1 = h f(x_n, y_n), k2 = h f(x_n + h, y_n + k1), k3 = h f(x_n + h, y_n - k1 + 2k2)"
+        ],
+        "answer": 2,
+        "explanation": "The classical 3rd-order Runge-Kutta method uses k1 = h f(x_n, y_n), k2 = h f(x_n + h/2, y_n + k1/2), and k3 = h f(x_n + h, y_n - k1 + 2k2) to achieve third-order accuracy in approximating y(x)."
+    },
+    {
+        "id": 13,
+        "question": "What does this function implement?\n\ndef rule(f, a, b):\n    h = (b - a) / 4\n    result = 7* f(a) + 32* f(a + h) + 12* f(a + 2*h)\n    result += 32 * f(a + 3*h) + 7 * f(b)\n    return result * 3*h / 45",
+        "type": "multiple-choice",
+        "options": [
+            "Trapezoidal rule",
+            "Simpson's 1/3 rule",
+            "Simpson's 3/8 rule",
+            "Boole's rule",
+            "Euler's method"
+        ],
+        "answer": 3,
+        "explanation": "This function implements Boole's rule (also called the 5-point Newton-Cotes formula). It uses 5 equally spaced points with weights 7, 32, 12, 32, 7 and multiplies the sum by 3h/45 to approximate the integral."
+    },
+    {
+        "id": 2,
+        "question": "Weddle's rule is particularly accurate because:",
+        "type": "multiple-choice",
+        "options": [
+            "It uses 7 points",
+            "It uses Chebyshev points instead of equally spaced points",
+            "It uses an even number of points",
+            "It has a higher degree of precision than expected from interpolation",
+            "It combines Simpson's 1/3 and 3/8 rules"
+        ],
+        "answer": 3,
+        "explanation": "Weddle's rule is a numerical integration method based on a 6th-degree polynomial over six subintervals (7 points) and achieves a higher degree of precision than expected, making it particularly accurate compared to other simple Newton-Cotes formulas."
+    },
+    {
+        "id": 15,
+        "question": "Which interpolation method has local control—changing one data point affects only nearby intervals?",
+        "type": "multiple-choice",
+        "options": [
+            "Newton's forward interpolation",
+            "Cubic spline interpolation",
+            "Lagrange interpolation",
+            "Newton's divided differences interpolation",
+            "All polynomial methods have global control"
+        ],
+        "answer": 1,
+        "explanation": "Cubic spline interpolation has local control because adjusting one data point only affects the spline segments near that point. In contrast, global polynomial methods like Lagrange or Newton interpolation affect the entire curve when a single point changes."
+    },
+    {
+        "id": 16,
+        "question": "What is the fundamental idea behind Newton-Cotes integration formulas?",
+        "type": "multiple-choice",
+        "options": [
+            "Transform the integral into a differential equation",
+            "Replace the integrand with a Taylor series expansion",
+            "All correct",
+            "Replace the integrand with an interpolating polynomial and integrate it",
+            "Use Monte Carlo sampling to approximate the integral"
+        ],
+        "answer": 3,
+        "explanation": "Newton-Cotes formulas approximate a definite integral by replacing the integrand with an interpolating polynomial over equally spaced points and then integrating this polynomial exactly. This provides numerical estimates for the integral."
+    },
+    {
+        "id": 17,
+        "question": "For y' = 2x, y(0) = 0, h = 1, one step of Euler gives y1 = 0. What does the Modified Euler method give?",
+        "type": "multiple-choice",
+        "options": [
+            "y = 0.5",
+            "y = 1.0",
+            "y = 2.0",
+            "y = 0",
+            "y = 0.25"
+        ],
+        "answer": 1,
+        "explanation": "Modified Euler (Heun's method) averages the slope at the beginning and end of the interval: y1 = 0 + (1/2)*(f(0,0)+f(1,0)) = 0 + 0.5*(0+2) = 1.0."
+    },
+    {
+        "id": 18,
+        "question": "Given points (1,2), (3,4), and (5,6), what is the Lagrange basis polynomial L(x) for the second point (3,4) at x = 3?",
+        "type": "multiple-choice",
+        "options": [
+            "1.5",
+            "0.25",
+            "0.0",
+            "1.25",
+            "1.0"
+        ],
+        "answer": 4,
+        "explanation": "The Lagrange basis polynomial for the second point is L1(x) = ((x-1)/(3-1)) * ((x-5)/(3-5)) = -((x-1)(x-5))/4. Evaluating at x=3 gives L1(3) = 1."
+    },
+    {
+        "id": 19,
+        "question": "What is the value of ∫₀² x dx using Simpson's 1/3 rule with h = 1?",
+        "type": "multiple-choice",
+        "options": [
+            "3.0",
+            "4.0",
+            "3.5",
+            "5.0",
+            "2.0"
+        ],
+        "answer": 4,
+        "explanation": "Simpson's 1/3 rule: ∫₀² x dx ≈ (h/3)[f(0) + 4 f(1) + f(2)] = (1/3)[0 + 4*1 + 2] = 2.0."
+    },
+    {
+        "id": 20,
+        "question": "Why is Gauss-Seidel typically faster than Jacobi for large systems?",
+        "type": "multiple-choice",
+        "options": [
+            "It avoids storing two copies of the solution vector.",
+            "It exploits sparsity patterns more effectively.",
+            "It always converges in fewer iterations due to using updated values immediately.",
+            "All of the above.",
+            "It requires fewer floating-point operations per iteration."
+        ],
+        "answer": 3,
+        "explanation": "Gauss-Seidel is generally faster because it uses the latest updated values immediately within each iteration, often leading to faster convergence. Additionally, it only needs one copy of the solution vector, which can reduce memory usage, and can exploit sparsity more efficiently than Jacobi. Therefore, all of the above reasons contribute to its speed advantage."
+    },
+    {
+        "id": 21,
+        "question": "What is the correct Muller's method denominator selection for stability?\n\nDisc = sqrt(b**2 - 4*a*c)\nif abs(b + disc) > abs(b - disc):\n    denom = b + disc\nelse:\n    denom = b - disc\nx_new = x2 - (2*c) / denom",
+        "type": "multiple-choice",
+        "options": [
+            "Should use b + disc always",
+            "Should use b - disc always",
+            "Correct",
+            "Should use abs(disc) only",
+            "Should choose smaller denominator"
+        ],
+        "answer": 2,
+        "explanation": "In Muller's method, the denominator is chosen to maximize stability and avoid division by a small number. The selection logic (choosing b + disc or b - disc depending on which has larger magnitude) ensures numerical stability, so the given implementation is correct."
+    },
+    {
+        "id": 22,
+        "question": "Which code correctly implements the bisection method's interval update?\n\ndef bisection_step(a, b, f):\n    c = (a + b)/2\n    if f(c) == 0:\n        return c\n    if f(a) * f(c) < 0:\n        # Update interval\n        return ???\n    else:\n        # Update interval\n        return ???",
+        "type": "multiple-choice",
+        "options": [
+            "a, b = c and b, a = a, c",
+            "a, b = b, c and a, b = c, a",
+            "a, b = a, c and a, b = c, b",
+            "a, b = c, b and a, b = c, b",
+            "a, b = a, c and b = b, c"
+        ],
+        "answer": 4,
+        "explanation": "In the bisection method, after computing the midpoint c, the interval is updated depending on the sign of f(c). If f(a)*f(c) < 0, the root lies in [a,c], so update b = c. Otherwise, the root lies in [c,b], so update a = c. This ensures the interval always brackets the root."
+    },
+    {
+        "id": 23,
+        "question": "Which method is used to find the dominant eigenvalue of a matrix?",
+        "type": "multiple-choice",
+        "options": [
+            "Gaussian elimination",
+            "Jacobi method",
+            "LU factorization",
+            "Iterative inversion method",
+            "Power method"
+        ],
+        "answer": 4,
+        "explanation": "The Power Method is an iterative technique specifically used to find the dominant (largest in magnitude) eigenvalue of a matrix. It repeatedly multiplies an initial vector by the matrix and normalizes it to converge toward the eigenvector associated with the dominant eigenvalue."
+    },
+    {
+        "id": 24,
+        "question": "In the iterative method for matrix inversion, the error matrix E is defined as:",
+        "type": "multiple-choice",
+        "options": [
+            "E = AB + I",
+            "E = B - A^(-1)",
+            "E = BA - I",
+            "E = A - B",
+            "E = AB - I"
+        ],
+        "answer": 4,
+        "explanation": "In iterative methods for matrix inversion, the error matrix is defined as E = AB - I, where B is the current approximation of A^(-1). This measures how far the product AB is from the identity matrix, guiding convergence of the iterative process."
+    },
+    {
+        "id": 25,
+        "question": "In the Jacobi method, the rotation matrix G is used to:",
+        "type": "multiple-choice",
+        "options": [
+            "Compute the trace",
+            "Find the inverse",
+            "Multiply the matrix by a scalar",
+            "Zero out the largest off-diagonal element",
+            "Compute the determinant"
+        ],
+        "answer": 3,
+        "explanation": "In the Jacobi eigenvalue method, the rotation matrix G is used to perform a similarity transformation that zeros out the largest off-diagonal element of a symmetric matrix. Repeated rotations eventually diagonalize the matrix, revealing its eigenvalues."
+    },
+    {
+        "id": 26,
+        "question": "Which condition guarantees convergence for both Jacobi and Gauss-Seidel methods for solving Ax = b?",
+        "type": "multiple-choice",
+        "options": [
+            "The spectral radius of the iteration matrix ρ(T) < 1",
+            "A is strictly diagonally dominant",
+            "A is symmetric positive definite",
+            "A is tridiagonal",
+            "A has no zero diagonal elements"
+        ],
+        "answer": 1,
+        "explanation": "Strict diagonal dominance of matrix A guarantees convergence for both Jacobi and Gauss-Seidel iterative methods. While other conditions like ρ(T)<1 or positive definiteness can ensure convergence under certain circumstances, strict diagonal dominance is a sufficient condition applicable to both methods."
+    },
+    {
+        "id": 27,
+        "question": "The Jacobi method (for eigenvalue problems) is applicable to:",
+        "type": "multiple-choice",
+        "options": [
+            "Only diagonal matrices",
+            "Only triangular matrices",
+            "Symmetric matrices",
+            "Only singular matrices",
+            "Only matrices with complex eigenvalues"
+        ],
+        "answer": 2,
+        "explanation": "The Jacobi method for eigenvalue problems is designed for real symmetric matrices. It iteratively applies rotations to zero out off-diagonal elements, eventually diagonalizing the matrix to reveal its eigenvalues."
+    },
+    {
+        "id": 28,
+        "question": "In the fixed-point iteration method, convergence is guaranteed if:",
+        "type": "multiple-choice",
+        "options": [
+            "|g'(x)| > 1 in the neighborhood of the root",
+            "The initial guess is far from the root",
+            "g(x) is linear",
+            "g(x) is continuous",
+            "|g'(x)| < 1 in the neighborhood of the root"
+        ],
+        "answer": 4,
+        "explanation": "For fixed-point iteration x = g(x), convergence is guaranteed if the magnitude of the derivative of g at the root is less than 1, i.e., |g'(x)| < 1 in the neighborhood of the root. This ensures successive iterations move closer to the root."
+    },
+    {
+        "id": 29,
+        "question": "Müller's method approximates the function using:",
+        "type": "multiple-choice",
+        "options": [
+            "A tangent line",
+            "A straight line",
+            "A spline curve",
+            "A quadratic polynomial",
+            "A cubic polynomial"
+        ],
+        "answer": 3,
+        "explanation": "Müller's method uses a quadratic polynomial to approximate the function based on three points. It then finds the roots of this polynomial to iteratively approximate the solution of f(x) = 0."
+    }
+]
